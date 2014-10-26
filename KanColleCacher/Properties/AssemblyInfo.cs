@@ -6,11 +6,11 @@ using System.Runtime.InteropServices;
 // 特性集控制。更改这些特性值可修改
 // 与程序集关联的信息。
 [assembly: AssemblyTitle("提督很忙！缓存工具")]
-[assembly: AssemblyDescription("保存游戏资源缓存以加快游戏加载速度的KanColleViewer工具。")]
+[assembly: AssemblyDescription("通过创建本地缓存以加快游戏加载速度（并支持魔改）")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
 [assembly: AssemblyProduct("KanColleCacher")]
-[assembly: AssemblyCopyright("?2014 - d.f.32")]
+[assembly: AssemblyCopyright("©2014 - d.f.32")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
@@ -33,5 +33,5 @@ using System.Runtime.InteropServices;
 // 可以指定所有这些值，也可以使用“生成号”和“修订号”的默认值，
 // 方法是按如下所示使用“*”: 
 // [assembly: AssemblyVersion("1.0.*")]
-[assembly: AssemblyVersion("1.0.0.1")]
-[assembly: AssemblyFileVersion("1.0.0.1")]
+[assembly: AssemblyVersion("1.2.0.0")]
+[assembly: AssemblyFileVersion("1.2.0.0")]
