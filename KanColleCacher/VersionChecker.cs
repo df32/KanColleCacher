@@ -251,6 +251,9 @@ namespace d_f_32.KanColleCacher
 			{
 				elm.SetElementValue(_ElmTime, time);
 				elm.SetElementValue(_ElmVersion, version);
+#if DEBUG
+				Log.Note("【UpdateRecord】", path);
+#endif
 			}
 			else
 			{
@@ -261,6 +264,9 @@ namespace d_f_32.KanColleCacher
 						)
 					);
 				recordList = fileXML.Root.Elements();
+#if DEBUG
+				Log.Note("【AddRecord】", path);
+#endif
 			}
 		}
 
@@ -299,7 +305,7 @@ namespace d_f_32.KanColleCacher
 		/// <returns>1 - 返回日期；0 - 无日期记录；-1 - 文件类型不需要检测</returns>
 		static public int GetFileLastTime(Uri uri, out string time)
 		{
-			Log.Note("【GetFileLastTime】", uri.AbsolutePath);
+			//Log.Note("【GetFileLastTime】", uri.AbsolutePath);
 			time = "";
 			string version = "";
 			if (!uri.AbsolutePath.EndsWith(".swf"))
@@ -308,12 +314,12 @@ namespace d_f_32.KanColleCacher
 
 			XElement elm;
 
-			Log.Note("【GetFileLastTime】 311");
+			//Log.Note("【GetFileLastTime】 311");
 
 			if (GetRecord(uri, out elm) <= 0)
 				return 0;
 
-			Log.Note("【GetFileLastTime】 316");
+			//Log.Note("【GetFileLastTime】 316");
 
 			time = elm.Element(_ElmTime) != null ?
 				elm.Element(_ElmTime).Value :
@@ -323,7 +329,7 @@ namespace d_f_32.KanColleCacher
 				"";
 
 			string queryVer = _GetVersionFromUri(uri);
-			Log.Note("【比对版本】version ? queryVer", version + (version == queryVer? "==": "!=") + queryVer);
+			//Log.Note("【比对版本】version ? queryVer", version + (version == queryVer? "==": "!=") + queryVer);
 
 			if (!string.IsNullOrEmpty(queryVer) && version != queryVer)
 			{
