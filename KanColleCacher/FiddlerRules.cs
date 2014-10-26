@@ -54,14 +54,22 @@ namespace d_f_32.KanColleCacher
 				oSession.utilCreateResponseAndBypassServer();
 				oSession.ResponseBody = File.ReadAllBytes(result);
 				_CreateResponseHeader(oSession, result);
+#if DEBUG
 				Log.Note("【返回本地】" + result);
+#endif
 			}
 			else if (direction == Direction.Verify_LocalFile)
 			{
 				//请求服务器验证文件
 				oSession.oRequest.headers["If-Modified-Since"] = result;
 				oSession.bBufferResponse = true;
+#if DEBUG
 				Log.Note("【验证文件】" + oSession.url);
+#endif
+			}
+			else 
+			{ 
+				//下载文件
 			}
         }
         #endregion
@@ -77,17 +85,20 @@ namespace d_f_32.KanColleCacher
 				if (!string.IsNullOrEmpty(filepath))
 				{
 					//服务器返回304，文件没有修改 -> 返回本地文件
-					oSession.utilDecodeResponse();
+					oSession.bBufferResponse = true;
 					oSession.ResponseBody = File.ReadAllBytes(filepath);
 					oSession.oResponse.headers.HTTPResponseCode = 200;
 					oSession.oResponse.headers.HTTPResponseStatus = "200 OK";
 					oSession.oResponse.headers["Last-Modified"] = oSession.oRequest.headers["If-Modified-Since"];
-					oSession.oResponse.headers.Remove("If-Modified-Since");
 					oSession.oResponse.headers["Accept-Ranges"] = "bytes";
+					oSession.oResponse.headers.Remove("If-Modified-Since");
+					oSession.oRequest.headers.Remove("If-Modified-Since");
 					if (filepath.EndsWith(".swf"))
 						oSession.oResponse.headers["Content-Type"] = "application/x-shockwave-flash";
+#if DEBUG
 					Log.PrintOnce(oSession.oResponse.headers.ToString());
-					Log.Note("【捕获304】" + oSession.url, filepath);
+					Log.Note("【捕获 304】" + oSession.url, filepath);
+#endif
 				}
 			}
         }
@@ -114,7 +125,9 @@ namespace d_f_32.KanColleCacher
 						oSession.SaveResponseBody(filepath);
 						cache.RecordNewModifiedTime(oSession.fullUrl,
 							oSession.oResponse.headers["Last-Modified"]);
-						//Log.Note("【下载】", oSession.fullUrl);
+#if DEBUG
+						Log.Note("【下载文件】", oSession.fullUrl);
+#endif
 					}
 					catch (Exception ex)
 					{
