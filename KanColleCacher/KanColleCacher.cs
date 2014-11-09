@@ -6,7 +6,7 @@ namespace d_f_32.KanColleCacher
 	[Export(typeof(IToolPlugin))]
 	[ExportMetadata("Title", "KanColleCacher")]
 	[ExportMetadata("Description", "通过创建本地缓存以加快游戏加载速度（并支持魔改）")]
-	[ExportMetadata("Version", "1.2.0.0")]
+	[ExportMetadata("Version", "1.3.0.0")]
 	[ExportMetadata("Author", "d.f.32")]
 	public class KanColleCacher : IToolPlugin
     {
@@ -45,8 +45,8 @@ namespace d_f_32.KanColleCacher
 
 	[Export(typeof(INotifier))]
 	[ExportMetadata("Title", "KanColleCacher")]
-	[ExportMetadata("Description", "将游戏资源缓存到指定文件夹，以加快游戏加载速度。")]
-	[ExportMetadata("Version", "1.0.0.1")]
+	[ExportMetadata("Description", "通过创建本地缓存以加快游戏加载速度（并支持魔改）")]
+	[ExportMetadata("Version", "1.3.0.0")]
 	[ExportMetadata("Author", "d.f.32")]
 	public class KanColleCacher_Initializer : INotifier
 	{

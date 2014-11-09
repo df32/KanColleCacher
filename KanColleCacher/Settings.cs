@@ -82,7 +82,8 @@ namespace d_f_32.KanColleCacher
                 _CacheResourceFiles = 2;
                 _CacheSoundFiles = 2;
 
-				_UpdateNoModifiedTimeFile = false;
+				//_UpdateNoModifiedTimeFile = false;
+				_CheckFiles = 1;
          }
        
 
@@ -213,18 +214,33 @@ namespace d_f_32.KanColleCacher
             }
         }
 
-		private bool _UpdateNoModifiedTimeFile;
-		public bool UpdateNoModifiedTimeFile
+		//0-不检查 1-不检查资源文件 2-检查所有文件
+		private int _CheckFiles;
+		public int CheckFiles
 		{
-			get { return this._UpdateNoModifiedTimeFile; }
+			get { return this._CheckFiles; }
 			set
 			{
-				if (this._UpdateNoModifiedTimeFile != value)
+				if (this._CheckFiles != value)
 				{
-					this._UpdateNoModifiedTimeFile = value;
+					this._CheckFiles = value;
 					this.RaisePropertyChanged();
 				}
 			}
 		}
+
+		//private bool _UpdateNoModifiedTimeFile;
+		//public bool UpdateNoModifiedTimeFile
+		//{
+		//	get { return this._UpdateNoModifiedTimeFile; }
+		//	set
+		//	{
+		//		if (this._UpdateNoModifiedTimeFile != value)
+		//		{
+		//			this._UpdateNoModifiedTimeFile = value;
+		//			this.RaisePropertyChanged();
+		//		}
+		//	}
+		//}
     }
 }
