@@ -35,7 +35,7 @@ namespace d_f_32.KanColleCacher
 
 		static bool _Filter(Session oSession)
 		{
-			return oSession.uriContains("/kcs/");
+			return oSession.PathAndQuery.StartsWith("/kcs/");
 		}
 
         #region     Fiddler向服务器发送客户端请求前执行的动作

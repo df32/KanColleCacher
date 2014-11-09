@@ -160,10 +160,8 @@ namespace d_f_32.KanColleCacher
 			filepath = Settings.Current.CacheFolder + "\\Last-Modified.xml";
 			try
 			{
-				if (!File.Exists(filepath))
-					return;
-
-				fileXML = XDocument.Load(filepath);
+				if (File.Exists(filepath))
+					fileXML = XDocument.Load(filepath);
 			}
 			catch (Exception ex)
 			{
@@ -177,6 +175,7 @@ namespace d_f_32.KanColleCacher
 			}
 
 			recordList = fileXML.Root.Elements();
+			//recordList 和 fileXML是同步的
 		}
 
 		/// <summary>
@@ -220,6 +219,12 @@ namespace d_f_32.KanColleCacher
 				//}
 
 				*/
+				var elms = fileXML.Root.Elements()
+							.Where(elm => elm.Name.Equals(_ItemElm))
+							.OrderBy(elm => { return elm.Element(_ElmPath).Value; })
+							.ToArray();
+				fileXML.Root.Elements().Remove();
+				fileXML.Root.Add(elms);
 
 				fileXML.Save(filepath);
 			}
@@ -263,10 +268,11 @@ namespace d_f_32.KanColleCacher
 						new XElement(_ElmVersion, version)
 						)
 					);
-				recordList = fileXML.Root.Elements();
+				//recordList = fileXML.Root.Elements();
 #if DEBUG
 				Log.Note("【AddRecord】", path);
 #endif
+				fileXML.Save(filepath);
 			}
 		}
 
