@@ -185,47 +185,27 @@ namespace d_f_32.KanColleCacher
 		{
 			try
 			{
+				var list = fileXML.Descendants(_ItemElm).ToList();
+				try
+				{
+					list.Sort((x, y) =>
+					{
+						return String.Compare(
+							x.Element(_ElmPath).Value ?? "",
+							y.Element(_ElmPath).Value ?? ""
+							);
+					});
+				}
+				catch(Exception ex)
+				{
+					Log.Warning(ex.InnerException, 
+						"元素排序时发生异常（xml损坏）", 
+						"已停止排序",
+						ex.Message);
+				}
 
-				/*	试图排序
-				//var elms0 = fileXML.Root.Elements();
-				//Log.Note("fileXML.Root.Elements()：	" + elms0.Count().ToString());
-				//Log.Note("fileXML.Root.Elements()[0]：	" + elms0.First().Name);
-				//Log.Note(elms0.First().Name + (elms0.First().Name.ToString() == _ItemElm ? "==" : "!=") + _ItemElm);
-
-				//var elms1 = fileXML.Root.Elements(_ItemElm);
-				//Log.Note("fileXML.Root.Elements(_ItemElm)：	" + elms1.Count().ToString());
-
-				//var elms3 = fileXML.Root.Elements("Record");
-				//Log.Note("fileXML.Root.Elements(Record)：	" + elms1.Count().ToString());
-
-
-				var elms2 = fileXML.Root.Elements().Where(elm => elm.Name.ToString() == _ItemElm);
-				Log.Note("fileXML.Root.Elements().Where(_ItemElm)：	" + elms2.Count().ToString());
-
-				
-				//try 
-				//{
-					var elms4 = elms2.OrderBy(elm => elm.Element(_ElmPath).Value);
-					Log.Note("fileXML.Root.Elements().Where(_ItemElm).OrderBy()：	" + elms4.Count().ToString());
-					var elms = elms2.ToArray();
-
-					fileXML.Root.Elements().Remove();
-					fileXML.Root.Add(elms);
-				//}
-				//catch (Exception ex)
-				//{
-				//	Log.Note("try1 error");
-				//	Log.Exception(ex.InnerException, ex, "保存Last-Modified.xml时发生异常");
-				//}
-
-				*/
-				var elms = fileXML.Root.Elements()
-							.Where(elm => elm.Name.Equals(_ItemElm))
-							.OrderBy(elm => { return elm.Element(_ElmPath).Value; })
-							.ToArray();
 				fileXML.Root.Elements().Remove();
-				fileXML.Root.Add(elms);
-
+				fileXML.Root.Add(list.ToArray());
 				fileXML.Save(filepath);
 			}
 			catch (Exception ex)

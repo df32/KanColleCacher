@@ -57,6 +57,7 @@ namespace d_f_32.KanColleCacher
 				_CreateResponseHeader(oSession, result);
 #if DEBUG
 				Log.Note("【返回本地】" + result);
+				System.Diagnostics.Debug.WriteLine("【返回本地】" + result);
 #endif
 			}
 			else if (direction == Direction.Verify_LocalFile)

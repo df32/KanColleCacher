@@ -21,13 +21,13 @@ namespace d_f_32.KanColleCacher
 			StringBuilder content = new StringBuilder();
 
 			content.AppendFormat(
-				"{0}\t{1}\t{2}\t{3}\t{4}\t{5}\t{6}\t{7}\t{8}",
+				"{0}\t{1}\t{2}\t{3}\t{4}\t{5}\t{6}\t{7}\t{8}\r\n",
 				"SortNo", "ShipId", "ShipName",
 				"FileName", "FileVersion", "GraphSortNo",
 				"TypeName", "TypeSortNo", "TypeId"
 				);
 			content.AppendFormat(
-				"{0}\t{1}\t{2}\t{3}\t{4}\t{5}\t{6}\t{7}\t{8}",
+				"{0}\t{1}\t{2}\t{3}\t{4}\t{5}\t{6}\t{7}\t{8}\r\n",
 				"序号", "ID", "名称",
 				"文件名", "文件版本", "文件序号",
 				"类型", "类型序号", "类型ID"
@@ -41,7 +41,7 @@ namespace d_f_32.KanColleCacher
 			graphList.ForEach(x =>
 				{
 					content.AppendFormat(
-						"{0}\t{1}\t{2}\t{3}\t{4}\t{5}\t{6}\t{7}\t{8}",
+						"{0}\t{1}\t{2}\t{3}\t{4}\t{5}\t{6}\t{7}\t{8}\r\n",
 						x.ship_sortno, x.ship_id, x.ship_name,
 						x.ship_filename, x.ship_version, x.ship_graph_sortno,
 						x.ship_type_name, x.ship_type_sortno, x.ship_type_id
@@ -117,7 +117,9 @@ namespace d_f_32.KanColleCacher
 		{
 			if (oSession.PathAndQuery != "/kcsapi/api_start2")
 				return;
-
+#if DEBUG
+			Log.Note("PrintGraphListRule> Start");
+#endif
 			ParseSession(oSession);
 			PrintToFile();
 		}
