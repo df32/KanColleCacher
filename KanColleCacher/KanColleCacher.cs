@@ -10,16 +10,23 @@ namespace d_f_32.KanColleCacher
 	[ExportMetadata("Author", "d.f.32")]
 	public class KanColleCacher : IToolPlugin
     {
-		static CacherToolView view;
+		static bool isInitialized = false;
 		const string name = "缓存工具";
-		
-        static public void Initialize()
-        {
-			//Log.Note("-> Initialize()", System.DateTime.Now.ToString());
+		static CacherToolView view;
+
+		static public void Initialize()
+		{
+#if DEBUG
+			Log.Note("-> Initialize()", System.DateTime.Now.ToString());
+#endif
+			if (isInitialized) return;
+
 			Settings.Load();
 			view = new CacherToolView();
 			FiddlerRules.Initialize();
-        }
+
+			isInitialized = true;
+		}
 
 		~KanColleCacher()
 		{

@@ -31,6 +31,7 @@ namespace d_f_32.KanColleCacher
             FiddlerApplication.BeforeRequest += _BeforeRequest;
             FiddlerApplication.BeforeResponse += _BeforeResponse;
             FiddlerApplication.AfterSessionComplete += _AfterComplete;
+			FiddlerApplication.AfterSessionComplete += GraphList.PrintGraphListRule;
         }
 
 		static bool _Filter(Session oSession)

@@ -40,6 +40,9 @@
       <HintPath>Libraries\KanColleViewer.exe</HintPath>
       <Private>False</Private>
     </Reference>
+    <Reference Include="KanColleWrapper">
+      <HintPath>Libraries\KanColleWrapper.dll</HintPath>
+    </Reference>
     <Reference Include="Livet">
       <HintPath>Libraries\Livet.dll</HintPath>
     </Reference>
@@ -58,6 +61,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="GMTHelper.cs" />
+    <Compile Include="GraphList.cs" />
     <Compile Include="SwitchCaseConverter.cs" />
     <Compile Include="Cache.cs" />
     <Compile Include="Log.cs" />
