@@ -97,25 +97,22 @@ namespace DebugPlatform
 			filepath = @"B:\GitHub\KanColleCacher\DebugPlatform\Last-Modified.xml";
 
 
-			var list = fileXML.Descendants(_ItemElm).ToList();
+
 			try
 			{
-				list.Sort((x, y) =>
-				{
-					return String.Compare(
-						x.Element(_ElmPath).Value ?? "",
-						y.Element(_ElmPath).Value ?? ""
-						);
-				});
+				var elms = fileXML.Descendants(_ItemElm)
+							.OrderBy(elm =>
+								{ return elm.Element(_ElmPath).Value; }
+							).ToArray();
+
+				fileXML.Root.Elements().Remove();
+				fileXML.Root.Add(elms);
 			}
 			catch
 			{
 				//Log.Exception(ex.InnerException, ex, "保存Last-Modified.xml时发生异常");
 			}
-
-			fileXML.Root.Elements().Remove();
-			fileXML.Root.Add(list.ToArray());
-
+			
 			fileXML.Save(filepath);
 		}
 

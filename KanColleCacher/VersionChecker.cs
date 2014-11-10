@@ -185,27 +185,23 @@ namespace d_f_32.KanColleCacher
 		{
 			try
 			{
-				var list = fileXML.Descendants(_ItemElm).ToList();
-				try
-				{
-					list.Sort((x, y) =>
-					{
-						return String.Compare(
-							x.Element(_ElmPath).Value ?? "",
-							y.Element(_ElmPath).Value ?? ""
-							);
-					});
-				}
-				catch(Exception ex)
-				{
-					Log.Warning(ex.InnerException, 
-						"元素排序时发生异常（xml损坏）", 
-						"已停止排序",
-						ex.Message);
-				}
+				var elms = fileXML.Descendants(_ItemElm)
+							.OrderBy(elm =>
+							{ return elm.Element(_ElmPath).Value; }
+							).ToArray();
 
 				fileXML.Root.Elements().Remove();
-				fileXML.Root.Add(list.ToArray());
+				fileXML.Root.Add(elms);
+			}
+			catch(Exception ex)
+			{
+				Log.Warning(ex.InnerException, 
+					"元素排序时发生异常（xml损坏）", 
+					"已停止排序",
+					ex.Message);
+			}
+			try
+			{	
 				fileXML.Save(filepath);
 			}
 			catch (Exception ex)
