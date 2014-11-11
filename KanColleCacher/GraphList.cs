@@ -8,6 +8,7 @@ using Grabacr07.KanColleWrapper.Models;
 using Grabacr07.KanColleWrapper.Models.Raw;
 using Fiddler;
 using System.IO;
+using Debug = System.Diagnostics.Debug;
 
 namespace d_f_32.KanColleCacher
 {
@@ -32,11 +33,22 @@ namespace d_f_32.KanColleCacher
 				"文件名", "文件版本", "文件序号",
 				"类型", "类型序号", "类型ID"
 				);
-
-			graphList.Sort((x,y) => 
+			try
 			{
-				return x.ship_sortno <= y.ship_sortno ? -1 : 1;
-			});
+				graphList.Sort((x, y) =>
+				{
+					if (x.ship_sortno == y.ship_sortno)
+						return 0;
+
+					return x.ship_sortno < y.ship_sortno ? -1 : 1;
+				});
+			}
+			catch (Exception ex)
+			{
+				Debug.WriteLine("Cachr>	GraphList.PrintToFile() 排序时发生异常（graphList.Sort）");
+				Debug.WriteLine(ex);
+			}
+			
 
 			graphList.ForEach(x =>
 				{
@@ -54,7 +66,7 @@ namespace d_f_32.KanColleCacher
 			}
 			catch (Exception ex)
 			{
-				Log.Exception(ex.Source, ex, "GraphList.PrintToFile() 写入文件时异常");
+				Log.Exception(ex.Source, ex, "写入立绘列表文件时异常");
 			}
 		}
 
@@ -98,19 +110,25 @@ namespace d_f_32.KanColleCacher
 						item.ship_type_sortno = _loc3.api_sortno;
 					}
 
+					graphList.Add(item);
 					mst_ship.Remove(item.ship_id);
 				}
 				else
 				{
 #if DEBUG
-					Log.Note(String.Format(@"> shipgraph->ship匹配失败
+					Debug.WriteLine(@"CACHR> shipgraph->ship匹配失败
 > {0} = {1} {2} {3}
-", _loc1.ToString(), _loc1.api_id, _loc1.api_sortno, _loc1.api_filename));
+", _loc1.ToString(), _loc1.api_id, _loc1.api_sortno, _loc1.api_filename);
 #endif
 				}
 			}
 
-
+#if DEBUG
+			Debug.WriteLine("graphList = {0}, mst_shipgraph = {1}",
+						graphList.Count.ToString(),
+						mst_shipgraph.Count.ToString()
+						);
+#endif
 		}
 
 		static public void PrintGraphListRule(Session oSession)
@@ -118,7 +136,7 @@ namespace d_f_32.KanColleCacher
 			if (oSession.PathAndQuery != "/kcsapi/api_start2")
 				return;
 #if DEBUG
-			Log.Note("PrintGraphListRule> Start");
+			Debug.WriteLine("CACHR>	PrintGraphListRule> Start");
 #endif
 			ParseSession(oSession);
 			PrintToFile();
@@ -128,16 +146,16 @@ namespace d_f_32.KanColleCacher
 	
 	class ship_graph_item
 	{
-		public int ship_id { get; set; }
-		public int ship_sortno { get; set; }
-		public string ship_name { get; set; }
+		public int ship_id = 0;
+		public int ship_sortno = 0;
+		public string ship_name = "";
 
-		public int ship_type_id { get; set; }
-		public int ship_type_sortno { get; set; }
-		public string ship_type_name { get; set; }
+		public int ship_type_id = 0;
+		public int ship_type_sortno = 0;
+		public string ship_type_name = "";
 
-		public int ship_graph_sortno { get; set; }
-		public string ship_filename { get; set; }
-		public string ship_version { get; set; }
+		public int ship_graph_sortno = 0;
+		public string ship_filename = "";
+		public string ship_version = "";
 	}
 }

@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Fiddler;
+using Debug = System.Diagnostics.Debug;
 
 namespace d_f_32.KanColleCacher
 {
@@ -17,11 +18,11 @@ namespace d_f_32.KanColleCacher
 
     class FiddlerRules
     {
-        static Cache cache;
+        static CacheCore cache;
 		
 		static public void Initialize ()
 		{
-			cache = new Cache();
+			cache = new CacheCore();
 			
 			_AppendToFiddler();
 		}
@@ -55,19 +56,16 @@ namespace d_f_32.KanColleCacher
 				oSession.utilCreateResponseAndBypassServer();
 				oSession.ResponseBody = File.ReadAllBytes(result);
 				_CreateResponseHeader(oSession, result);
-#if DEBUG
-				Log.Note("【返回本地】" + result);
-				System.Diagnostics.Debug.WriteLine("【返回本地】" + result);
-#endif
+
+				//Debug.WriteLine("CACHR> 【返回本地】" + result);
 			}
 			else if (direction == Direction.Verify_LocalFile)
 			{
 				//请求服务器验证文件
 				oSession.oRequest.headers["If-Modified-Since"] = result;
 				oSession.bBufferResponse = true;
-#if DEBUG
-				Log.Note("【验证文件】" + oSession.url);
-#endif
+
+				//Debug.WriteLine("CACHR> 【验证文件】" + oSession.PathAndQuery);
 			}
 			else 
 			{ 
@@ -97,10 +95,11 @@ namespace d_f_32.KanColleCacher
 					oSession.oRequest.headers.Remove("If-Modified-Since");
 					if (filepath.EndsWith(".swf"))
 						oSession.oResponse.headers["Content-Type"] = "application/x-shockwave-flash";
-#if DEBUG
-					Log.PrintOnce(oSession.oResponse.headers.ToString());
-					Log.Note("【捕获 304】" + oSession.url, filepath);
-#endif
+
+					//Debug.WriteLine(oSession.oResponse.headers.ToString());
+					//Debug.WriteLine("");
+					//Debug.WriteLine("CACHR> 【捕获 304】" + oSession.PathAndQuery);
+					//Debug.WriteLine("		" + filepath);
 				}
 			}
         }
@@ -127,13 +126,12 @@ namespace d_f_32.KanColleCacher
 						oSession.SaveResponseBody(filepath);
 						cache.RecordNewModifiedTime(oSession.fullUrl,
 							oSession.oResponse.headers["Last-Modified"]);
-#if DEBUG
-						Log.Note("【下载文件】", oSession.fullUrl);
-#endif
+
+						//Debug.WriteLine("CACHR> 【下载文件】" + oSession.PathAndQuery);
 					}
 					catch (Exception ex)
 					{
-						Log.Exception(oSession, ex, "会话结束时，保存返回数据错误");
+						Log.Exception(oSession, ex, "会话结束时，保存返回文件时发生异常");
 					}
 				}
 			}

@@ -5,7 +5,11 @@ using System.Runtime.InteropServices;
 // 有关程序集的常规信息通过以下
 // 特性集控制。更改这些特性值可修改
 // 与程序集关联的信息。
+#if DEBUG
+[assembly: AssemblyTitle("提督很忙！缓存工具 (DEBUG)")]
+#else
 [assembly: AssemblyTitle("提督很忙！缓存工具")]
+#endif
 [assembly: AssemblyDescription("通过创建本地缓存以加快游戏加载速度（并支持魔改）")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]

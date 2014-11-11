@@ -7,138 +7,12 @@ using System.Xml;
 using System.Xml.Linq;
 using System.IO;
 using Grabacr07.KanColleViewer.Models.Data.Xml;
+using Debug = System.Diagnostics.Debug;
 
 namespace d_f_32.KanColleCacher
 {
-	#region 保留的代码
-	/*
-	class ModifiedRecord
-	{
-		static string filepath;
-		static Dictionary<string, string> record = new Dictionary<string, string>();
-		/// <summary>
-		/// 从Last-Modified.xml加载记录
-		/// </summary>
-		static public void Load()
-		{
-			filepath = Settings.Current.CacheFolder + "\\Last-Modified.xml";
-			try
-			{
-				if (File.Exists(filepath))
-					_ReadFile();
-			}
-			catch (Exception ex)
-			{
-				Log.Exception(ex.InnerException, ex, "读取Last-Modified.xml时发生异常");
-			}
-		}
-		/// <summary>
-		/// 保存到Last-Modified.xml
-		/// </summary>
-		static public void Save()
-		{
-			record = record.OrderBy(x => x.Key).ToDictionary(x => x.Key, y => y.Value);
-
-			filepath = Settings.Current.CacheFolder + "\\Last-Modified.xml";
-
-			if (File.Exists(filepath))
-				File.Delete(filepath);
-			try
-			{
-				_WriteFile();
-			}
-			catch (Exception ex)
-			{
-				Log.Exception(ex.InnerException, ex, "保存Last-Modified.xml时发生异常");
-				throw ex;
-			}
-		}
-
-		/// <summary>
-		/// 返回文件最后更改日期
-		/// </summary>
-		/// <param name="uri">文件对应的url</param>
-		/// <param name="time">最后修改日期</param>
-		/// <returns>1 - 返回日期；0 - 无日期记录；-1 - 文件类型不需要检测</returns>
-		static public int GetFileLastTime(Uri uri, out string time)
-		{
-			time = "";
-
-			if (!uri.AbsolutePath.EndsWith(".swf"))
-				//只有swf才需要检查修改时间
-				return -1;
-
-			if (record.TryGetValue(uri.AbsolutePath, out time))
-				return 1;
-
-			return 0;
-		}
-
-		static public void Add(Uri uri, string time)
-		{
-			if (!uri.AbsolutePath.EndsWith(".swf"))
-				return;
-
-			if (record.ContainsKey(uri.AbsolutePath))
-				record[uri.AbsolutePath] = time;
-
-			else
-				record.Add(uri.AbsolutePath, time);
-
-		}
-
-
-		static void _ReadFile()
-		{
-			using (XmlReader reader = XmlReader.Create(filepath))
-			{
-				while (reader.Read())
-				{
-					if (reader.NodeType == XmlNodeType.Element &&
-						reader.Name == "FilePath")
-					{
-						var time = reader["LastModified"];
-
-						if (reader.Read())
-						{
-							record.Add(reader.Value, time);
-						}
-					}
-				}
-			}
-		}
-
-		static void _WriteFile()
-		{
-			XmlWriterSettings settings = new XmlWriterSettings();
-			settings.Indent = true;
-			settings.IndentChars = ("\t");
-			settings.NewLineOnAttributes = true;
-
-			using (XmlWriter writer = XmlWriter.Create(filepath, settings))
-			{
-				writer.WriteStartDocument();
-				writer.WriteStartElement("CacheFilesLastModifiedTime");
-
-				foreach (var file in record.Keys)
-				{
-					writer.WriteStartElement("FilePath");
-					writer.WriteAttributeString("LastModified", record[file]);
-					writer.WriteString(file);
-					writer.WriteEndElement();
-				}
-
-				writer.WriteEndElement();
-				writer.WriteComment(DateTime.Now.ToString() + "\tby 风飏");
-				writer.WriteEndDocument();
-			}
-		}
-	}
-	*/
-	#endregion
-
-
-	class ModifiedRecord
+	
+	class VersionChecker
 	{
 		static string filepath;
 		static XDocument fileXML;
@@ -196,7 +70,7 @@ namespace d_f_32.KanColleCacher
 			catch(Exception ex)
 			{
 				Log.Warning(ex.InnerException, 
-					"元素排序时发生异常（xml损坏）", 
+					"对xml文档排序时发生异常（元素损坏）", 
 					"已停止排序",
 					ex.Message);
 			}
@@ -232,9 +106,8 @@ namespace d_f_32.KanColleCacher
 			{
 				elm.SetElementValue(_ElmTime, time);
 				elm.SetElementValue(_ElmVersion, version);
-#if DEBUG
-				Log.Note("【UpdateRecord】", path);
-#endif
+
+				//Debug.WriteLine("CACHR> 【UpdateRecord】" + path);
 			}
 			else
 			{
@@ -245,9 +118,8 @@ namespace d_f_32.KanColleCacher
 						)
 					);
 				//recordList = fileXML.Root.Elements();
-#if DEBUG
-				Log.Note("【AddRecord】", path);
-#endif
+				//Debug.WriteLine("CACHR> 【AddRecord】" + path);
+
 				fileXML.Save(filepath);
 			}
 		}
@@ -287,7 +159,6 @@ namespace d_f_32.KanColleCacher
 		/// <returns>1 - 返回日期；0 - 无日期记录；-1 - 文件类型不需要检测</returns>
 		static public int GetFileLastTime(Uri uri, out string time)
 		{
-			//Log.Note("【GetFileLastTime】", uri.AbsolutePath);
 			time = "";
 			string version = "";
 			if (!uri.AbsolutePath.EndsWith(".swf"))
@@ -296,12 +167,8 @@ namespace d_f_32.KanColleCacher
 
 			XElement elm;
 
-			//Log.Note("【GetFileLastTime】 311");
-
 			if (GetRecord(uri, out elm) <= 0)
 				return 0;
-
-			//Log.Note("【GetFileLastTime】 316");
 
 			time = elm.Element(_ElmTime) != null ?
 				elm.Element(_ElmTime).Value :
@@ -311,12 +178,10 @@ namespace d_f_32.KanColleCacher
 				"";
 
 			string queryVer = _GetVersionFromUri(uri);
-			//Log.Note("【比对版本】version ? queryVer", version + (version == queryVer? "==": "!=") + queryVer);
-
+			
 			if (!string.IsNullOrEmpty(queryVer) && version != queryVer)
 			{
 				//版本记录不符合 -> 返回无记录
-
 				return 0;
 			}
 

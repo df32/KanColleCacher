@@ -63,7 +63,7 @@
     <Compile Include="GMTHelper.cs" />
     <Compile Include="GraphList.cs" />
     <Compile Include="SwitchCaseConverter.cs" />
-    <Compile Include="Cache.cs" />
+    <Compile Include="CacheCore.cs" />
     <Compile Include="Log.cs" />
     <Compile Include="FiddlerRules.cs" />
     <Compile Include="CacherToolView.xaml.cs">

@@ -1,5 +1,7 @@
 ﻿using Grabacr07.KanColleViewer.Composition;
 using System.ComponentModel.Composition;
+using Debug = System.Diagnostics.Debug;
+
 
 namespace d_f_32.KanColleCacher
 {
@@ -17,7 +19,7 @@ namespace d_f_32.KanColleCacher
 		static public void Initialize()
 		{
 #if DEBUG
-			Log.Note("-> Initialize()", System.DateTime.Now.ToString());
+			Log.Warning("KanColleCacher","-> Initialize()", System.DateTime.Now.ToString());
 #endif
 			if (isInitialized) return;
 
@@ -26,6 +28,12 @@ namespace d_f_32.KanColleCacher
 			FiddlerRules.Initialize();
 
 			isInitialized = true;
+
+			Debug.WriteLine(@"
+==================================================
+START	KanColleCacher
+CACHR>	初始化：{0}
+", System.DateTime.Now.ToString());
 		}
 
 		~KanColleCacher()

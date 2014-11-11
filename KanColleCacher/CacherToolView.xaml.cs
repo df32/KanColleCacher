@@ -24,7 +24,7 @@ namespace d_f_32.KanColleCacher
 			}
             catch (Exception  ex)
             {
-				Log.Exception(ex.Source, ex, "CacherToolView.InitializeComponent()");
+				Log.Exception(ex.Source, ex, "ToolView初始化时发生异常");
             }
 			
         }

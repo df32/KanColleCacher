@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 using Grabacr07.KanColleViewer.Models.Data.Xml;
 using Grabacr07.KanColleViewer;
 using Livet;
-
+using Debug = System.Diagnostics.Debug;
 
 namespace d_f_32.KanColleCacher
 {
@@ -41,8 +41,7 @@ namespace d_f_32.KanColleCacher
 					catch (Exception ex)
 					{
 						Current.CacheFolder= Directory.GetCurrentDirectory() + @"\MyCache";
-						//Log.Note("设置文件中CacheFolder不存在，试图创建时发生异常", Current.CacheFolder, "已使用默认设置");
-						System.Diagnostics.Debug.WriteLine(ex);
+						Log.Exception(ex.InnerException, ex, "设置文件中CacheFolder不存在，试图创建时发生异常");
 					}
                 }
             }

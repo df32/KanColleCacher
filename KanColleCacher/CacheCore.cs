@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using Debug = System.Diagnostics.Debug;
 
 
 namespace d_f_32.KanColleCacher
@@ -28,22 +29,22 @@ namespace d_f_32.KanColleCacher
     }
 
 
-	class Cache
+	class CacheCore
 	{
 		#region 初始化与析构
 		Settings set;
 		string myCacheFolder;
 
-		public Cache()
+		public CacheCore()
 		{
 			set = Settings.Current;
-			ModifiedRecord.Load();
+			VersionChecker.Load();
 			myCacheFolder = set.CacheFolder;
 		}
 
-		~Cache()
+		~CacheCore()
 		{
-			ModifiedRecord.Save();
+			VersionChecker.Save();
 		}
 		#endregion
 
@@ -141,7 +142,7 @@ namespace d_f_32.KanColleCacher
 					if (set.CheckFiles > 1 || (set.CheckFiles > 0 && type != filetype.resources))
 					{
 						//检查文件时间
-						int i = ModifiedRecord.GetFileLastTime(uri, out result);
+						int i = VersionChecker.GetFileLastTime(uri, out result);
 
 						if (i == 1)
 						{
@@ -257,8 +258,9 @@ namespace d_f_32.KanColleCacher
 
 					}
 				}
-				//Log.Note("_RecogniseFileType检查到无法识别的文件", uri.AbsolutePath);
-
+				
+				//Debug.WriteLine("CACHR> _RecogniseFileType检查到无法识别的文件");
+				//Debug.WriteLine("		"+uri.AbsolutePath);
 				return filetype.unknown_file;
 			}
 
@@ -270,7 +272,7 @@ namespace d_f_32.KanColleCacher
 			try { uri = new Uri(url); }
 			catch { return; }
 
-			ModifiedRecord.Add(uri, time);
+			VersionChecker.Add(uri, time);
 		}
 
 		public bool AllowedToSave(filetype type)
