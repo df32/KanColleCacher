@@ -20,11 +20,11 @@ using System.IO;
  *	Debug.WriteLine("CACHR> (信息内容)");
  * 
  * 【输出警告】
- *  （输出到调试监听 和 错误文件）
+ *	希望被人看到的警告信息（输出到调试监听 和 错误文件）
  *  Log.Warning(sender, "警告信息", "警告信息2"...)
  * 
- * 【输出异常】	
- * （输出到调试监听 和 错误文件）
+ * 【输出异常】
+ *	希望被人看到的错误信息（输出到调试监听 和 错误文件）
  *	Log.Execption(sender, ex, message)
  */
 

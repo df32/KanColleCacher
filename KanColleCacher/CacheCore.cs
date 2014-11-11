@@ -15,16 +15,29 @@ namespace d_f_32.KanColleCacher
         not_file,
         unknown_file,
 
-		game_entry,		//{Core.swf, mainD2.swf}
-		entry_large,	//{commonAsset, font, TitleMain}
-		port_main,		//{PortMain.swf, sound_se}
+		game_entry,		//kcs\mainD2.swf
+						//kcs\Core.swf
 
-        scenes,			//kcs\scenes
-        resources,		//kcs\resources
+		entry_large,	//kcs\scenes\TitleMain.swf
+						//kcs\resources\swf\commonAsset.swf
+						//kcs\resources\swf\font.swf
+						//kcs\resources\swf\icons.swf
+
+		port_main,		//kcs\PortMain.swf
+						//kcs\resources\swf\sound_se.swf
+
+        scenes,			//kcs\scenes\
+		
+		resources,		//kcs\resources\bgm_p\
+						//kcs\resources\swf\sound_bgm.swf
+						//kcs\resources\swf\sound_b_bgm_*.swf
+						//kcs\resources\swf\map\
+						//kcs\resources\swf\ships\
+						
 		image,			//kcs\resources\images
         sound,			//kcs\sound
 
-		world_name,		//kcs\resources\image\world
+		world_name,		//kcs\resources\images\world
 		title_call,		//kcs\sound\titlecall
     }
 

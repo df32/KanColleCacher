@@ -14,12 +14,7 @@ namespace d_f_32.KanColleCacher
     [Serializable]
     public class Settings :NotificationObject
     {
-        private static readonly string filePath = Path.Combine(
-            Environment.GetFolderPath(
-                Environment.SpecialFolder.ApplicationData),
-            "grabacr.net",
-            "KanColleViewer",
-            "KanColleCacher.xml");
+        private static string filePath;
 
         public static Settings Current { get; private set; }
 
@@ -28,28 +23,78 @@ namespace d_f_32.KanColleCacher
         /// </summary>
         public static void Load()
         {
-            try
-            {
-                Current = filePath.ReadXml<Settings>();
+			var switch_on = 0;
 
-                if (!Directory.Exists(Current.CacheFolder))
-                {
-                    try 
-					{
-						Directory.CreateDirectory(Current.CacheFolder);
-					}
-					catch (Exception ex)
-					{
-						Current.CacheFolder= Directory.GetCurrentDirectory() + @"\MyCache";
-						Log.Exception(ex.InnerException, ex, "设置文件中CacheFolder不存在，试图创建时发生异常");
-					}
-                }
-            }
-            catch (Exception ex)
-            {
-                Current = new Settings();
-				Log.Exception(ex.InnerException, ex, "读取设置文件时出现异常");
-            }
+SwitchCase:
+			switch (switch_on)
+			{
+				case 0:
+					goto SetPath1;
+
+				//第一次读取失败
+				case 1:
+					goto SetPath2;
+
+				//第二次读取失败
+				case 2:
+					goto Failed;
+			}
+goto Failed;
+
+
+SetPath1:
+			filePath = Directory.GetCurrentDirectory() + @"\Plugins\KanColleCacher.xml";
+
+switch_on = 1;
+goto ReadFile;
+
+
+SetPath2:
+			filePath = Path.Combine(
+						Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
+						"grabacr.net",
+						"KanColleViewer",
+						"KanColleCacher.xml"
+						);
+switch_on = 2;
+goto ReadFile;
+
+
+ReadFile:
+			if (File.Exists(filePath))
+			{
+				try
+				{
+					Current = filePath.ReadXml<Settings>();
+					goto Succeed;
+				}
+				catch (Exception ex)
+				{
+					Log.Exception(ex.InnerException, ex, "读取设置文件时出现异常");
+				}
+			}
+goto SwitchCase;
+			
+
+Failed:
+			Current = new Settings();
+return;
+
+
+Succeed:
+			if (!Directory.Exists(Current.CacheFolder))
+			{
+				try
+				{
+					Directory.CreateDirectory(Current.CacheFolder);
+				}
+				catch (Exception ex)
+				{
+					Current.CacheFolder = Directory.GetCurrentDirectory() + @"\MyCache";
+					Log.Exception(ex.InnerException, ex, "设置文件中CacheFolder不存在，试图创建时发生异常");
+				}
+			}
+return;
         }
         
         /// <summary>
@@ -81,13 +126,16 @@ namespace d_f_32.KanColleCacher
                 _CacheResourceFiles = 2;
                 _CacheSoundFiles = 2;
 
-				//_UpdateNoModifiedTimeFile = false;
 				_CheckFiles = 1;
+				_PrintGraphList = true;
          }
        
 
 
         private string _CacheFolder;
+		/// <summary>
+		/// 缓存文件夹
+		/// </summary>
         public string CacheFolder
         {
             get { return this._CacheFolder; }
@@ -102,6 +150,9 @@ namespace d_f_32.KanColleCacher
         }
 
         private bool _CacheEnabled;
+		/// <summary>
+		/// 启用缓存功能
+		/// </summary>
         public bool CacheEnabled
         {
             get { return this._CacheEnabled; }
@@ -116,6 +167,9 @@ namespace d_f_32.KanColleCacher
         }
 
         private bool _HackEnabled;
+		/// <summary>
+		/// 启用Hack规则
+		/// </summary>
         public bool HackEnabled
         {
             get { return this._HackEnabled; }
@@ -130,6 +184,9 @@ namespace d_f_32.KanColleCacher
         }
 
         private bool _HackTitleEnabled;
+		/// <summary>
+		/// 启用针对TitleCall与WorldName的特殊规则
+		/// </summary>
         public bool HackTitleEnabled
         {
             get { return this._HackTitleEnabled; }
@@ -213,8 +270,12 @@ namespace d_f_32.KanColleCacher
             }
         }
 
-		//0-不检查 1-不检查资源文件 2-检查所有文件
 		private int _CheckFiles;
+		/// <summary>
+		/// 向服务器发送文件验证请求
+		/// 0 - 不验证；1 - 不验证资源SWF文件；2 - 验证所有SWF文件
+		/// 文件验证会延长文件加载时间
+		/// </summary>
 		public int CheckFiles
 		{
 			get { return this._CheckFiles; }
@@ -228,18 +289,23 @@ namespace d_f_32.KanColleCacher
 			}
 		}
 
-		//private bool _UpdateNoModifiedTimeFile;
-		//public bool UpdateNoModifiedTimeFile
-		//{
-		//	get { return this._UpdateNoModifiedTimeFile; }
-		//	set
-		//	{
-		//		if (this._UpdateNoModifiedTimeFile != value)
-		//		{
-		//			this._UpdateNoModifiedTimeFile = value;
-		//			this.RaisePropertyChanged();
-		//		}
-		//	}
-		//}
+		private bool _PrintGraphList;
+		/// <summary>
+		/// 输出舰娘立绘的文件名列表
+		/// 只有当缓存文件夹中的GraphList.txt不存在时才输出
+		/// 只在游戏加载时有效
+		/// </summary>
+		public bool PrintGraphList
+		{
+			get { return this._PrintGraphList; }
+			set
+			{
+				if (this._PrintGraphList != value)
+				{
+					this._PrintGraphList = value;
+					this.RaisePropertyChanged();
+				}
+			}
+		}
     }
 }

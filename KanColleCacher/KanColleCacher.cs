@@ -1,7 +1,7 @@
 ﻿using Grabacr07.KanColleViewer.Composition;
 using System.ComponentModel.Composition;
 using Debug = System.Diagnostics.Debug;
-
+using File = System.IO.File;
 
 namespace d_f_32.KanColleCacher
 {
@@ -12,10 +12,9 @@ namespace d_f_32.KanColleCacher
 	[ExportMetadata("Author", "d.f.32")]
 	public class KanColleCacher : IToolPlugin
     {
-		static bool isInitialized = false;
 		const string name = "缓存工具";
+		static bool isInitialized = false;
 		static CacherToolView view;
-		const bool ExportGraphList = true;
 
 		static public void Initialize()
 		{
@@ -23,7 +22,6 @@ namespace d_f_32.KanColleCacher
 			isInitialized = true;
 
 #if DEBUG
-			Debug.AutoFlush = true;
 			Debug.WriteLine(@"
 KanColleCacher
 =================================================
@@ -35,8 +33,13 @@ CACHR>	初始化开始：{0}
 			view = new CacherToolView();
 
 			Debug.WriteLine(@"CACHR>	GraphList加入规则");
-			if (ExportGraphList)
+
+			//只有当列表文件不存在时才打印列表
+			if (Settings.Current.PrintGraphList && 
+					!File.Exists(Settings.Current.CheckFiles + "\\GraphList.txt"))
+			{
 				GraphList.AppendRule();
+			}
 			Debug.WriteLine(@"CACHR>	GraphList加入规则完成");
 
 			Debug.WriteLine(@"CACHR>	Fiddler初始化开始");
