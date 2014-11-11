@@ -34,7 +34,7 @@ namespace d_f_32.KanColleCacher
 
 	class Log
     {
-        const string path = "error.log";
+        const string path = "error2.log";
 		const string wrMsg = @"
 ===================================KAN==COLLE==CACHER======
 WARNING  date = {0}, sender = {1}, message = 
@@ -62,15 +62,15 @@ CACHR>	{0}
 			var message = string.Join("\r\n\t\t ", args) + "\r\n";
 			Debug.WriteLine(wrFmt, message);
 
-			File.AppendAllText(
-				path,
-				string.Format(
-					wrMsg,
-					sender,
+			File.AppendAllText(path,
+				string.Format(wrMsg,
 					DateTimeOffset.Now,
+					sender,
 					message
 				)
 			);
+
+			Debug.Flush();
 		}
 
 		//希望被人看到的错误信息
@@ -80,7 +80,13 @@ CACHR>	{0}
 
             try
             {
-                var message = string.Format(exMsg, DateTimeOffset.Now, sender, describe, exception);
+                var message = string.Format(
+						exMsg, 
+						DateTimeOffset.Now, 
+						sender, 
+						describe, 
+						exception
+					);
 
                 File.AppendAllText(path, message);
             }
@@ -89,6 +95,8 @@ CACHR>	{0}
 				Debug.WriteLine("CACHR>	Log.Exception()异常");
                 Debug.WriteLine("		"+ex.Message);
             }
+
+			Debug.Flush();
         }
 
 #if DEBUG

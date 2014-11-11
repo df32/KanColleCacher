@@ -22,13 +22,13 @@ namespace d_f_32.KanColleCacher
 			StringBuilder content = new StringBuilder();
 
 			content.AppendFormat(
-				"{0}\t{1}\t{2}\t{3}\t{4}\t{5}\t{6}\t{7}\t{8}\r\n",
+				"{0}\t{1}\t{2}\t{3}\t{4}\t{5}\t{6}\r\n",
 				"SortNo", "ShipId", "ShipName",
-				"FileName", "FileVersion", "GraphSortNo",
-				"TypeName", "TypeSortNo", "TypeId"
+				"FileName", "FileVersion",
+				"TypeName",  "TypeId"
 				);
 			content.AppendFormat(
-				"{0}\t{1}\t{2}\t{3}\t{4}\t{5}\t{6}\t{7}\t{8}\r\n",
+				"{0}\t{1}\t{2}\t{3}\t{4}\t{5}\t{6}\r\n",
 				"序号", "ID", "名称",
 				"文件名", "文件版本", "文件序号",
 				"类型", "类型序号", "类型ID"
@@ -38,7 +38,12 @@ namespace d_f_32.KanColleCacher
 				graphList.Sort((x, y) =>
 				{
 					if (x.ship_sortno == y.ship_sortno)
-						return 0;
+					{
+						if (x.ship_id == y.ship_id)
+							return 0;
+
+						return x.ship_id < y.ship_id ? -1 : 1;
+					}
 
 					return x.ship_sortno < y.ship_sortno ? -1 : 1;
 				});
@@ -53,10 +58,10 @@ namespace d_f_32.KanColleCacher
 			graphList.ForEach(x =>
 				{
 					content.AppendFormat(
-						"{0}\t{1}\t{2}\t{3}\t{4}\t{5}\t{6}\t{7}\t{8}\r\n",
+						"{0}\t{1}\t{2}\t{3}\t{4}\t{5}\t{6}\r\n",
 						x.ship_sortno, x.ship_id, x.ship_name,
-						x.ship_filename, x.ship_version, x.ship_graph_sortno,
-						x.ship_type_name, x.ship_type_sortno, x.ship_type_id
+						x.ship_filename, x.ship_version,
+						x.ship_type_name, x.ship_type_id
 					);
 				});
 
@@ -74,7 +79,10 @@ namespace d_f_32.KanColleCacher
 		{
 			SvData<kcsapi_start2> svd;
 			if (!SvData.TryParse(oSession, out svd)) 
+			{
+				Log.Warning("GraphList.ParseSession()", "TryParse失败，无效的Session对象！");
 				return;
+			}
 
 			var mst_shipgraph = svd.Data.api_mst_shipgraph
 									.ToDictionary(x => x.api_id);
@@ -124,22 +132,40 @@ namespace d_f_32.KanColleCacher
 			}
 
 #if DEBUG
-			Debug.WriteLine("graphList = {0}, mst_shipgraph = {1}",
+			Debug.WriteLine("CACHR>	graphList = {0}, mst_shipgraph = {1}",
 						graphList.Count.ToString(),
 						mst_shipgraph.Count.ToString()
 						);
 #endif
 		}
 
-		static public void PrintGraphListRule(Session oSession)
+		static public void RulePrintGraphList(Session oSession)
 		{
 			if (oSession.PathAndQuery != "/kcsapi/api_start2")
 				return;
-#if DEBUG
-			Debug.WriteLine("CACHR>	PrintGraphListRule> Start");
-#endif
+
+			Debug.WriteLine("CACHR>	api_start2开始");
+			Debug.WriteLine(DateTime.Now);
 			ParseSession(oSession);
 			PrintToFile();
+
+			Debug.WriteLine("CACHR>	api_start2结束");
+			Debug.WriteLine(DateTime.Now);
+
+			//移除规则
+			RemoveRule();
+		}
+
+		static public void AppendRule()
+		{
+			FiddlerApplication.AfterSessionComplete += RulePrintGraphList;
+			Debug.WriteLine("CACHR>	RulePrintGraphList Appended");
+		}
+
+		static public void RemoveRule()
+		{
+			FiddlerApplication.AfterSessionComplete -= RulePrintGraphList;
+			Debug.WriteLine("CACHR>	RulePrintGraphList Removed");
 		}
 	}
 	

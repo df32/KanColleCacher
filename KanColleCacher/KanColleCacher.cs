@@ -15,30 +15,41 @@ namespace d_f_32.KanColleCacher
 		static bool isInitialized = false;
 		const string name = "缓存工具";
 		static CacherToolView view;
+		const bool ExportGraphList = true;
 
 		static public void Initialize()
 		{
-#if DEBUG
-			Log.Warning("KanColleCacher","-> Initialize()", System.DateTime.Now.ToString());
-#endif
 			if (isInitialized) return;
-
-			Settings.Load();
-			view = new CacherToolView();
-			FiddlerRules.Initialize();
-
 			isInitialized = true;
 
+#if DEBUG
+			Debug.AutoFlush = true;
 			Debug.WriteLine(@"
-==================================================
-START	KanColleCacher
-CACHR>	初始化：{0}
-", System.DateTime.Now.ToString());
+KanColleCacher
+=================================================
+CACHR>	初始化开始：{0}
+", System.DateTime.Now);
+#endif
+			
+			Settings.Load();
+			view = new CacherToolView();
+
+			Debug.WriteLine(@"CACHR>	GraphList加入规则");
+			if (ExportGraphList)
+				GraphList.AppendRule();
+			Debug.WriteLine(@"CACHR>	GraphList加入规则完成");
+
+			Debug.WriteLine(@"CACHR>	Fiddler初始化开始");
+			FiddlerRules.Initialize();
+			Debug.WriteLine(@"CACHR>	Fiddler初始化完成");
+
+			Debug.WriteLine(@"CACHR>	初始化完成");
 		}
 
 		~KanColleCacher()
 		{
 			Settings.Save();
+			Debug.Flush();
 		}
 
 		public string ToolName
