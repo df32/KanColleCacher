@@ -57,23 +57,23 @@ namespace d_f_32.KanColleCacher
 		/// </summary>
 		static public void Save()
 		{
-			try
-			{
-				var elms = fileXML.Descendants(_ItemElm)
-							.OrderBy(elm =>
-							{ return elm.Element(_ElmPath).Value; }
-							).ToArray();
+			//try
+			//{
+			//	var elms = fileXML.Descendants(_ItemElm)
+			//				.OrderBy(elm =>
+			//				{ return elm.Element(_ElmPath).Value; }
+			//				).ToArray();
 
-				fileXML.Root.Elements().Remove();
-				fileXML.Root.Add(elms);
-			}
-			catch(Exception ex)
-			{
-				Log.Warning(ex.InnerException, 
-					"对xml文档排序时发生异常（元素损坏）", 
-					"已停止排序",
-					ex.Message);
-			}
+			//	fileXML.Root.Elements().Remove();
+			//	fileXML.Root.Add(elms);
+			//}
+			//catch(Exception ex)
+			//{
+			//	Log.Warning(ex.InnerException, 
+			//		"对xml文档排序时发生异常（元素损坏）", 
+			//		"已停止排序",
+			//		ex.Message);
+			//}
 			try
 			{	
 				fileXML.Save(filepath);

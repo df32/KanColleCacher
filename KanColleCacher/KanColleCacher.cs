@@ -36,7 +36,7 @@ CACHR>	初始化开始：{0}
 
 			//只有当列表文件不存在时才打印列表
 			if (Settings.Current.PrintGraphList && 
-					!File.Exists(Settings.Current.CheckFiles + "\\GraphList.txt"))
+					!File.Exists(Settings.Current.CacheFolder + "\\GraphList.txt"))
 			{
 				GraphList.AppendRule();
 			}
