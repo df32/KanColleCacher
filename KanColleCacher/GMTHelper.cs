@@ -19,7 +19,7 @@ namespace d_f_32.KanColleCacher
 		}
 
 		#region 未引用的函数
-		/*
+		
 		/// <summary>  
 		/// 本地时间转成GMT格式的时间  
 		/// </summary>  
@@ -65,7 +65,7 @@ namespace d_f_32.KanColleCacher
 			}
 			return dt;
 		}
-*/
+
 		#endregion
 	}
 }

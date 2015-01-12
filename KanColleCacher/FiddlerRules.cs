@@ -46,22 +46,23 @@ namespace d_f_32.KanColleCacher
             if (!Settings.Current.CacheEnabled) return;
 			if (!_Filter(oSession)) return;
 
-            string result;
-			var direction = cache.GotNewRequest(oSession.fullUrl, out result);
+            string filepath;
+			var direction = cache.GotNewRequest(oSession.fullUrl, out filepath);
 			
 			if (direction == Direction.Return_LocalFile)
 			{
 				//返回本地文件
 				oSession.utilCreateResponseAndBypassServer();
-				oSession.ResponseBody = File.ReadAllBytes(result);
-				_CreateResponseHeader(oSession, result);
+				oSession.ResponseBody = File.ReadAllBytes(filepath);
+				_CreateResponseHeader(oSession, filepath);
 
 				//Debug.WriteLine("CACHR> 【返回本地】" + result);
 			}
 			else if (direction == Direction.Verify_LocalFile)
 			{
 				//请求服务器验证文件
-				oSession.oRequest.headers["If-Modified-Since"] = result;
+				//oSession.oRequest.headers["If-Modified-Since"] = result;
+				oSession.oRequest.headers["If-Modified-Since"] = _GetModifiedTime(filepath);
 				oSession.bBufferResponse = true;
 
 				//Debug.WriteLine("CACHR> 【验证文件】" + oSession.PathAndQuery);
@@ -81,6 +82,7 @@ namespace d_f_32.KanColleCacher
 			if (oSession.responseCode == 304)
 			{
 				string filepath = TaskRecord.GetAndRemove(oSession.fullUrl);
+				//只有TaskRecord中有记录的文件才是验证的文件，才需要修改Header
 				if (!string.IsNullOrEmpty(filepath))
 				{
 					//服务器返回304，文件没有修改 -> 返回本地文件
@@ -110,10 +112,12 @@ namespace d_f_32.KanColleCacher
             if (!Settings.Current.CacheEnabled) return;
 			if (!_Filter(oSession)) return;
 
+			//服务器返回200，下载新的文件
 			if (oSession.responseCode == 200)
 			{
 				string filepath = TaskRecord.GetAndRemove(oSession.fullUrl);
 
+				//只有TaskRecord中有记录的文件才是验证的文件，才需要保存
 				if (!string.IsNullOrEmpty(filepath))
 				{
 					if (File.Exists(filepath))
@@ -123,9 +127,9 @@ namespace d_f_32.KanColleCacher
 					try
 					{
 						oSession.SaveResponseBody(filepath);
-						cache.RecordNewModifiedTime(oSession.fullUrl,
-							oSession.oResponse.headers["Last-Modified"]);
-
+						//cache.RecordNewModifiedTime(oSession.fullUrl,
+						//	oSession.oResponse.headers["Last-Modified"]);
+						_SaveModifiedTime(filepath, oSession.oResponse.headers["Last-Modified"]);
 						//Debug.WriteLine("CACHR> 【下载文件】" + oSession.PathAndQuery);
 					}
 					catch (Exception ex)
@@ -157,8 +161,34 @@ namespace d_f_32.KanColleCacher
 
 
 
+		static void _SaveModifiedTime(string filepath, string gmTime)
+		{
+			FileInfo fi;
+			try 
+			{
+				fi = new FileInfo(filepath);
+				fi.LastWriteTime = GMTHelper.GMT2Local(gmTime);
+			}
+			catch (Exception ex)
+			{
+				Log.Exception("FiddlerRules", ex, "在保存文件修改时间时发生异常。");
+			}
+		}
 
-
+		static string _GetModifiedTime(string filepath)
+		{
+			FileInfo fi;
+			try
+			{
+				fi = new FileInfo(filepath);
+				return GMTHelper.ToGMTString(fi.LastWriteTime);
+			}
+			catch (Exception ex)
+			{
+				Log.Exception("FiddlerRules", ex, "在保存文件修改时间时发生异常。");
+				return "";
+			}
+		}
 
         #region 保留的代码
         //

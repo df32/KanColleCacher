@@ -51,7 +51,7 @@ namespace d_f_32.KanColleCacher
 		public CacheCore()
 		{
 			set = Settings.Current;
-			VersionChecker.Load();
+			//VersionChecker.Load();
 			myCacheFolder = set.CacheFolder;
 		}
 
@@ -154,30 +154,40 @@ namespace d_f_32.KanColleCacher
 					//（验证所有文件 或 只验证非资源文件）
 					if (set.CheckFiles > 1 || (set.CheckFiles > 0 && type != filetype.resources))
 					{
-						//检查文件时间
-						int i = VersionChecker.GetFileLastTime(uri, out result);
-
-						if (i == 1)
+						//只有swf文件需要验证时间
+						if (filepath.EndsWith(".swf"))
 						{
-							//存在这个文件的修改时间记录
+							//文件存在且需要验证时间
 							//-> 请求服务器验证修改时间（记录读取和保存的位置）
+							result = filepath;
 							_RecordTask(url, filepath);
 							return Direction.Verify_LocalFile;
 						}
-						else if (i == 0)
-						{
-							//没有关于这个文件最后修改时间的记录
-							//-> 当做这个文件不存在
-							//-> 下载文件（记录保存地址）
-							_RecordTask(url, filepath);
-							return Direction.Discharge_Response;
-						}
-						else
-						{
-							//文件类型不需要验证时间（只有swf验证）
-						}
-					}
 
+						////检查文件时间
+						//int i = VersionChecker.GetFileLastTime(uri, out result);
+
+						//if (i == 1)
+						//{
+						//	//存在这个文件的修改时间记录
+						//	//-> 请求服务器验证修改时间（记录读取和保存的位置）
+						//	_RecordTask(url, filepath);
+						//	return Direction.Verify_LocalFile;
+						//}
+						//else if (i == 0)
+						//{
+						//	//没有关于这个文件最后修改时间的记录
+						//	//-> 当做这个文件不存在
+						//	//-> 下载文件（记录保存地址）
+						//	_RecordTask(url, filepath);
+						//	return Direction.Discharge_Response;
+						//}
+						//else
+						//{
+						//	//文件类型不需要验证时间（只有swf验证）
+						//}
+					}
+					//文件不需验证
 					//->返回本地缓存文件
 					result = filepath;
 					return Direction.Return_LocalFile;
@@ -285,7 +295,7 @@ namespace d_f_32.KanColleCacher
 			try { uri = new Uri(url); }
 			catch { return; }
 
-			VersionChecker.Add(uri, time);
+			//VersionChecker.Add(uri, time);
 		}
 
 		public bool AllowedToSave(filetype type)

@@ -76,7 +76,6 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="UriExtension.cs" />
-    <Compile Include="VersionChecker.cs" />
   </ItemGroup>
   <ItemGroup>
     <Page Include="CacherToolView.xaml">
