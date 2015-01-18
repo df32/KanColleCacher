@@ -9,6 +9,9 @@ using Grabacr07.KanColleWrapper.Models.Raw;
 using Fiddler;
 using System.IO;
 using Debug = System.Diagnostics.Debug;
+using System.Runtime.Serialization.Json;
+using System.Windows;
+
 
 namespace d_f_32.KanColleCacher
 {
@@ -16,6 +19,9 @@ namespace d_f_32.KanColleCacher
 	{
 		static List<ship_graph_item> graphList = new List<ship_graph_item>();
 
+		/// <summary>
+		/// 将解析完成的信息保存到本地
+		/// </summary>
 		static void PrintToFile()
 		{
 			string filepath = Settings.Current.CacheFolder + "\\GraphList.txt";
@@ -75,20 +81,23 @@ namespace d_f_32.KanColleCacher
 			}
 		}
 
-		static void ParseSession(Session oSession)
+		/// <summary>
+		/// 解析 api_start2 数据信息
+		/// </summary>
+		static void ParseSession(kcsapi_start2 Data)
 		{
-			SvData<kcsapi_start2> svd;
-			if (!SvData.TryParse(oSession, out svd)) 
-			{
-				Log.Warning("GraphList.ParseSession()", "TryParse失败，无效的Session对象！");
-				return;
-			}
+			//SvData<kcsapi_start2> svd;
+			//if (!SvData.TryParse(oSession, out svd)) 
+			//{
+			//	Log.Warning("GraphList.ParseSession()", "TryParse失败，无效的Session对象！");
+			//	return;
+			//}
 
-			var mst_shipgraph = svd.Data.api_mst_shipgraph
+			var mst_shipgraph = Data.api_mst_shipgraph
 									.ToDictionary(x => x.api_id);
-			var mst_ship = svd.Data.api_mst_ship
+			var mst_ship = Data.api_mst_ship
 									.ToDictionary(x => x.api_id);
-			var mst_stype = svd.Data.api_mst_stype
+			var mst_stype = Data.api_mst_stype
 									.ToDictionary(x => x.api_id);
 
 			graphList.Clear();
@@ -139,18 +148,95 @@ namespace d_f_32.KanColleCacher
 #endif
 		}
 
+		/// <summary>
+		/// 开始生成 GraphList.txt 文件
+		/// </summary>
+		static public void GenerateList()
+		{
+			var path = Settings.Current.CacheFolder + @"/api_start2.dat";
+			if (!File.Exists(path))
+			{
+				MessageBox.Show("无法生成舰娘列表，因为没有保存 api_start2 通信数据。", "提督很忙！缓存工具");
+				return;
+			}
+
+			kcsapi_start2 data;
+			try
+			{
+				data = (kcsapi_start2)ReadSessionData();
+			}
+			catch (Exception ex)
+			{
+				MessageBox.Show("未能生成舰娘列表。读取本地保存的 api_start2 通信数据时发生异常。", "提督很忙！缓存工具");
+				Log.Exception(ex.Source, ex, "读取本地保存的 api_start2 通信数据时发生异常");
+				return;
+			}
+			try
+			{
+				ParseSession(data);
+			}
+			catch (Exception ex)
+			{
+				MessageBox.Show("未能生成舰娘列表。解析 api_start2 数据时发生异常。", "提督很忙！缓存工具");
+				Log.Exception(ex.Source, ex, "解析 api_start2 数据时发生异常。");
+				return;
+			}
+			try
+			{
+				PrintToFile();
+				string filepath = Settings.Current.CacheFolder + "\\GraphList.txt";
+				var si = new System.Diagnostics.ProcessStartInfo()
+				{
+					FileName = filepath,
+					UseShellExecute = true,
+				};
+				System.Diagnostics.Process.Start(si);
+			}
+			catch (Exception ex)
+			{
+				Log.Exception(ex.Source, ex, "写入GraphList.txt时或启动进程时发生异常");
+				return;
+			}
+		}
+
+		/// <summary>
+		/// 保存 api_start2 通信数据到本地
+		/// </summary>
+		static void SaveSessionData(Session session)
+		{
+			var path = Settings.Current.CacheFolder + @"/api_start2.dat";
+
+			var data = session.GetRequestBodyAsString();
+			data = data.StartsWith("svdata=")
+				? data.Substring(7) : data.Replace("svdata=", "");
+
+			File.WriteAllText(path, data);
+		}
+
+		/// <summary>
+		/// 从本地读取 api_start2 通信数据
+		/// </summary>
+		static object ReadSessionData()
+		{
+			var path = Settings.Current.CacheFolder + @"/api_start2.dat";
+			var bytes = Encoding.UTF8.GetBytes(File.ReadAllText(path));
+
+			var serializer = new DataContractJsonSerializer(typeof(svdata<kcsapi_start2>));
+			using (var stream = new MemoryStream(bytes))
+			{
+				return serializer.ReadObject(stream) as svdata<kcsapi_start2>;
+			}
+		}
+
+		/// <summary>
+		/// Fiddler规则（通信完成后
+		/// </summary>
 		static public void RulePrintGraphList(Session oSession)
 		{
 			if (oSession.PathAndQuery != "/kcsapi/api_start2")
 				return;
 
-			Debug.WriteLine("CACHR>	api_start2开始");
-			Debug.WriteLine(DateTime.Now);
-			ParseSession(oSession);
-			PrintToFile();
-
-			Debug.WriteLine("CACHR>	api_start2结束");
-			Debug.WriteLine(DateTime.Now);
+			SaveSessionData(oSession);
 
 			//移除规则
 			RemoveRule();
