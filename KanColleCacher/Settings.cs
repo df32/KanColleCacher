@@ -4,15 +4,17 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Grabacr07.KanColleViewer.Models.Data.Xml;
-using Grabacr07.KanColleViewer;
-using Livet;
 using Debug = System.Diagnostics.Debug;
+using d_f_32.KanColleCacher.Configuration;
+using System.ComponentModel;
+using System.ComponentModel.Composition;
+using System.Runtime.CompilerServices;
+
 
 namespace d_f_32.KanColleCacher
 {
     [Serializable]
-    public class Settings :NotificationObject
+    public class Settings : INotifyPropertyChanged
     {
         private static string filePath;
 
@@ -23,67 +25,25 @@ namespace d_f_32.KanColleCacher
         /// </summary>
         public static void Load()
         {
-			var switch_on = 0;
+			filePath = Directory.GetCurrentDirectory() + @"\Plugins\KanColleCacher.ini";
 
-SwitchCase:
-			switch (switch_on)
+			if (!File.Exists(filePath))
 			{
-				case 0:
-					goto SetPath1;
-
-				//第一次读取失败
-				case 1:
-					goto SetPath2;
-
-				//第二次读取失败
-				case 2:
-					goto Failed;
-			}
-goto Failed;
-
-
-SetPath1:
-			filePath = Directory.GetCurrentDirectory() + @"\Plugins\KanColleCacher.xml";
-
-switch_on = 1;
-goto ReadFile;
-
-
-SetPath2:
-			filePath = Path.Combine(
+				var path = Path.Combine(
 						Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
 						"grabacr.net",
 						"KanColleViewer",
-						"KanColleCacher.xml"
+						"KanColleCacher.ini"
 						);
-switch_on = 2;
-goto ReadFile;
+				if (File.Exists(path))
+					filePath = path;
+			}
 
-
-ReadFile:
 			if (File.Exists(filePath))
 			{
-				try
-				{
-					Current = filePath.ReadXml<Settings>();
-					goto Succeed;
-				}
-				catch (Exception ex)
-				{
-					Log.Exception(ex.InnerException, ex, "读取设置文件时出现异常");
-				}
-			}
-goto SwitchCase;
-			
+				var _Parser = ConfigParser.ReadIniFile(filePath);
+				Current = _Parser.DeserializeObject<Settings>("Settings");
 
-Failed:
-			Current = new Settings();
-return;
-
-
-Succeed:
-			if (!Directory.Exists(Current.CacheFolder))
-			{
 				try
 				{
 					Directory.CreateDirectory(Current.CacheFolder);
@@ -94,7 +54,12 @@ Succeed:
 					Log.Exception(ex.InnerException, ex, "设置文件中CacheFolder不存在，试图创建时发生异常");
 				}
 			}
-return;
+			else
+			{
+				//设置文件丢失
+			}
+
+			Current = Current ?? new Settings();
         }
         
         /// <summary>
@@ -104,7 +69,12 @@ return;
         {
             try
             {
-                Current.WriteXml(filePath);
+				var _Parser = File.Exists(filePath) 
+					? ConfigParser.ReadIniFile(filePath) 
+					: new ConfigParser();
+
+				_Parser.SerializeObject<Settings>(Current, "Settings");
+				_Parser.SaveIniFile(filePath);
             }
             catch (Exception ex)
             {
@@ -133,9 +103,7 @@ return;
 
 
         private string _CacheFolder;
-		/// <summary>
-		/// 缓存文件夹
-		/// </summary>
+		[ExportMetadata("Comment","缓存文件夹")]
         public string CacheFolder
         {
             get { return this._CacheFolder; }
@@ -150,9 +118,7 @@ return;
         }
 
         private bool _CacheEnabled;
-		/// <summary>
-		/// 启用缓存功能
-		/// </summary>
+		[ExportMetadata("Comment", "启用缓存功能")]
         public bool CacheEnabled
         {
             get { return this._CacheEnabled; }
@@ -167,10 +133,8 @@ return;
         }
 
         private bool _HackEnabled;
-		/// <summary>
-		/// 启用Hack规则
-		/// </summary>
-        public bool HackEnabled
+		[ExportMetadata("Comment", "启用Hack规则")]
+		public bool HackEnabled
         {
             get { return this._HackEnabled; }
             set
@@ -184,10 +148,8 @@ return;
         }
 
         private bool _HackTitleEnabled;
-		/// <summary>
-		/// 启用针对TitleCall与WorldName的特殊规则
-		/// </summary>
-        public bool HackTitleEnabled
+		[ExportMetadata("Comment", "启用针对TitleCall与WorldName的特殊规则")]
+		public bool HackTitleEnabled
         {
             get { return this._HackTitleEnabled; }
             set
@@ -271,11 +233,9 @@ return;
         }
 
 		private int _CheckFiles;
-		/// <summary>
-		/// 向服务器发送文件验证请求
-		/// 0 - 不验证；1 - 不验证资源SWF文件；2 - 验证所有SWF文件
-		/// 文件验证会延长文件加载时间
-		/// </summary>
+		[ExportMetadata("Comment", @"向服务器发送文件验证请求
+; 0 - 不验证；1 - 不验证资源SWF文件；2 - 验证所有SWF文件
+; 验证文件比不验证需要更长的加载时间，但可以避免游戏更新造成本地文件失效")]
 		public int CheckFiles
 		{
 			get { return this._CheckFiles; }
@@ -295,6 +255,7 @@ return;
 		/// 只有当缓存文件夹中的GraphList.txt不存在时才输出
 		/// 只在游戏加载时有效
 		/// </summary>
+		[ExportMetadata("Comment", "启用缓存功能")]
 		public bool PrintGraphList
 		{
 			get { return this._PrintGraphList; }
@@ -307,5 +268,19 @@ return;
 				}
 			}
 		}
-    }
+
+		#region 实现通知
+
+		public event PropertyChangedEventHandler PropertyChanged;
+
+		void RaisePropertyChanged([CallerMemberName] String propertyName = "")
+		{
+			if (PropertyChanged != null)
+			{
+				PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+			}
+		}
+
+		#endregion
+	}
 }

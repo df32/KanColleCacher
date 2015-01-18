@@ -60,6 +60,7 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ConfigParser.cs" />
     <Compile Include="GMTHelper.cs" />
     <Compile Include="GraphList.cs" />
     <Compile Include="SwitchCaseConverter.cs" />

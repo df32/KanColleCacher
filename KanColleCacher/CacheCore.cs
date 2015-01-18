@@ -55,10 +55,7 @@ namespace d_f_32.KanColleCacher
 			myCacheFolder = set.CacheFolder;
 		}
 
-		~CacheCore()
-		{
-			VersionChecker.Save();
-		}
+		
 		#endregion
 
 		/// <summary>
