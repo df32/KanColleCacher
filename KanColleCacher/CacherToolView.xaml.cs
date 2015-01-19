@@ -1,13 +1,9 @@
-﻿using Fiddler;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
-//using Livet.Messaging;
-//using Livet.Messaging.IO;
-//using Grabacr07.KanColleViewer.ViewModels;
 
 namespace d_f_32.KanColleCacher
 {
@@ -28,5 +24,20 @@ namespace d_f_32.KanColleCacher
             }
 			
         }
+
+		private void SelectCacheFolder_Click(object sender, RoutedEventArgs e)
+		{
+			var dlg = new System.Windows.Forms.FolderBrowserDialog()
+			{
+				SelectedPath = Settings.Current.CacheFolder,
+				ShowNewFolderButton = true,
+				Description = "选择一个文件夹用于保存缓存文件。新的地址将在程序下次启动时生效。"
+			};
+			if (dlg.ShowDialog() == System.Windows.Forms.DialogResult.OK 
+				&& Directory.Exists(dlg.SelectedPath))
+			{
+				Settings.Current.CacheFolder = dlg.SelectedPath;
+			}
+		}
     }
 }

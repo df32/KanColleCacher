@@ -35,8 +35,8 @@ CACHR>	初始化开始：{0}
 			Debug.WriteLine(@"CACHR>	GraphList加入规则");
 
 			//只有当列表文件不存在时才打印列表
-			if (Settings.Current.PrintGraphList && 
-					!File.Exists(Settings.Current.CacheFolder + "\\GraphList.txt"))
+			if (Settings.Current.SaveApiStart2 &&
+					!File.Exists(Settings.Current.CacheFolder + "\\api_start2.dat"))
 			{
 				GraphList.AppendRule();
 			}

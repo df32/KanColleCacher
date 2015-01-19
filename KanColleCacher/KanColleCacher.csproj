@@ -43,15 +43,13 @@
     <Reference Include="KanColleWrapper">
       <HintPath>Libraries\KanColleWrapper.dll</HintPath>
     </Reference>
-    <Reference Include="Livet">
-      <HintPath>Libraries\Livet.dll</HintPath>
-    </Reference>
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.Composition" />
     <Reference Include="System.Core" />
     <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xaml" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
@@ -64,7 +62,8 @@
     <Compile Include="ConfigParser.cs" />
     <Compile Include="GMTHelper.cs" />
     <Compile Include="GraphList.cs" />
-    <Compile Include="SwitchCaseConverter.cs" />
+    <Compile Include="ValidationRule.cs" />
+    <Compile Include="ValueConverter.cs" />
     <Compile Include="CacheCore.cs" />
     <Compile Include="Log.cs" />
     <Compile Include="FiddlerRules.cs" />
@@ -77,7 +76,7 @@
     <Compile Include="Settings.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="UriExtension.cs" />
+    <Compile Include="Extension.cs" />
   </ItemGroup>
   <ItemGroup>
     <Page Include="CacherToolView.xaml">

@@ -4,16 +4,17 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:d_f_32.KanColleCacher"
-             
+             Foreground="White"
+             Background="#FF1B1B1C"
              x:Class="d_f_32.KanColleCacher.CacherToolView" 
              mc:Ignorable="d" 
              d:DesignWidth="590" 
-             d:DesignHeight="400"
+             d:DesignHeight="600"
              d:DataContext="{d:DesignInstance local:Settings}">
 
 
     <UserControl.Resources>
-        <local:SwitchCaseConverter x:Key="SwitchCaseConverter"/>
+        <local:ThreeStateValueConverter x:Key="ThreeStateConverter"/>
 
         <Style TargetType="RadioButton">
             <Setter Property="HorizontalAlignment"
@@ -29,7 +30,7 @@
             <Setter Property="Foreground"
                     Value="White"/>
             <Setter Property="IsEnabled"
-                    Value="{Binding IsChecked, ElementName=checkBox}"/>
+                    Value="{Binding IsChecked, ElementName=CheckBox_CacheEnabled}"/>
         </Style>
         <Style x:Key="RadioLabel" TargetType="Label">
             <Setter Property="HorizontalAlignment"
@@ -41,12 +42,12 @@
             <Setter Property="Foreground"
                     Value="White"/>
             <Setter Property="IsEnabled"
-                    Value="{Binding IsChecked, ElementName=checkBox}"/>
+                    Value="{Binding IsChecked, ElementName=CheckBox_CacheEnabled}"/>
         </Style>
         <Style TargetType="Border" x:Key="BorderStyle">
             <Setter Property="Height" Value="1"/>
             <Setter Property="Width" Value="550"/>
-            <Setter Property="Margin" Value="25,15,0,1"/>
+            <Setter Property="Margin" Value="25,10,0,0"/>
             <Setter Property="BorderThickness" Value="1"/>
             <Setter Property="HorizontalAlignment" Value="Left"/>
             <Setter Property="VerticalAlignment" Value="Bottom"/>
@@ -55,6 +56,92 @@
         <Style TargetType="TextBlock" x:Key="DetailTextBlock">
             <Setter Property="Foreground"
                     Value="#FFC9C9C9"/>
+            <Setter Property="HorizontalAlignment" Value="Left"/>
+            <Setter Property="VerticalAlignment" Value="Top"/>
+        </Style>
+        <Style TargetType="CheckBox">
+            <Setter Property="Foreground" 
+                    Value="White"/>
+            <Setter Property="Margin"
+                    Value="10,10,0,0"/>
+            <Setter Property="HorizontalAlignment"
+                    Value="Left"/>
+            <Setter Property="VerticalAlignment"
+                    Value="Top"/>
+            <Style.Triggers>
+                <Trigger Property="IsEnabled" Value="False">
+                    <Setter Property="Opacity" Value="0.8"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+        <Style TargetType="Button">
+            <Setter Property="Background"
+				Value="#FF1B1B1C" />
+            <Setter Property="BorderBrush"
+				Value="#FF3F3F46" />
+            <Setter Property="Foreground"
+				Value="White" />
+            <Setter Property="BorderThickness"
+				Value="1" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="border"
+							BorderBrush="{TemplateBinding BorderBrush}"
+							BorderThickness="{TemplateBinding BorderThickness}"
+							SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"
+							Background="{TemplateBinding Background}">
+                            <ContentPresenter x:Name="contentPresenter"
+										  Margin="{TemplateBinding Padding}"
+										  HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+										  VerticalAlignment="{TemplateBinding VerticalContentAlignment}" />
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver"
+					 Value="True">
+                    <Setter Property="Background"
+						Value="{DynamicResource ActiveBackgroundBrushKey}" />
+                    <Setter Property="BorderBrush"
+						Value="{DynamicResource ActiveBorderBrushKey}" />
+                </Trigger>
+                <Trigger Property="IsPressed"
+					 Value="True">
+                    <Setter Property="Background"
+						Value="{DynamicResource AccentBrushKey}" />
+                    <Setter Property="BorderBrush"
+						Value="{DynamicResource ActiveBorderBrushKey}" />
+                    <Setter Property="Foreground"
+						Value="{DynamicResource AccentForegroundBrushKey}" />
+                </Trigger>
+                <Trigger Property="IsEnabled"
+					 Value="False">
+                    <Setter Property="Background"
+						Value="{DynamicResource InactiveBackgroundBrushKey}" />
+                    <Setter Property="BorderBrush"
+						Value="{DynamicResource InactiveBorderBrushKey}" />
+                    <Setter Property="Foreground"
+						Value="{DynamicResource InactiveForegroundBrushKey}" />
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+        <Style TargetType="CheckBox" 
+               BasedOn="{StaticResource {x:Type CheckBox}}"
+               x:Key="CheckFile_SwichCase_StyleKey">
+            <Setter Property="Background" Value="Azure"></Setter>
+            <Style.Triggers>
+                <Trigger Property="IsChecked" Value="True">
+                    <Setter Property="ToolTip" Value="对所有SWF文件进行更新检查"/>
+                </Trigger>
+                <Trigger Property="IsChecked" Value="False">
+                    <Setter Property="ToolTip" Value="对任何文件都不进行更新检查"/>
+                </Trigger>
+                <Trigger Property="IsChecked" Value="{x:Null}">
+                    <Setter Property="ToolTip" Value="仅对资源文件外的SWF文件进行更新检查"/>
+                </Trigger>
+            </Style.Triggers>
         </Style>
     </UserControl.Resources>
 
@@ -66,69 +153,160 @@
 		VerticalScrollBarVisibility="Auto" Margin="5">
         <Grid Height="Auto">
             <Grid.RowDefinitions>
-                <RowDefinition Height="93"/>
-                <RowDefinition Height="165"/>
-                <RowDefinition Height="59"/>
-                <RowDefinition Height="73"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
-            <CheckBox x:Name="checkBox" Content="启用缓存" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Height="15" Width="68" IsChecked="{Binding Current.CacheEnabled, Mode=TwoWay}"/>
-            <TextBlock Text="缓存文件夹" HorizontalAlignment="Left" Margin="30,33,0,0" VerticalAlignment="Top" Height="15" Width="60"/>
-            <TextBox HorizontalAlignment="Left" Margin="104,32,0,0" TextWrapping="Wrap" Text="{Binding Current.CacheFolder}" VerticalAlignment="Top" Width="388" Height="17" ToolTip="只有程序重新启动时才会生效" Background="#FF464646" Foreground="White" BorderBrush="#FF535353"/>
-            <TextBlock Text="※ 游戏缓存将会以「缓存文件夹\kcs\resources\」的结构保存到这里。" HorizontalAlignment="Left" Margin="31,60,0,0" VerticalAlignment="Top" Height="15" Width="378" Style="{StaticResource DetailTextBlock}"/>
+            
+            <StackPanel>
+                
+            <CheckBox x:Name="CheckBox_CacheEnabled" 
+                      Content="启用缓存"  
+                      IsChecked="{Binding Current.CacheEnabled, Mode=TwoWay}"/>
+                <Grid Margin="30,10,30,0" >
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="1*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Text="缓存文件夹" VerticalAlignment="Center"/>
+                    <TextBox Grid.Column="1" TextWrapping="Wrap" 
+                                Margin="20,0"
+                                Background="#FF464646" 
+                                Foreground="White" 
+                                BorderBrush="#FF535353">
+                        <TextBox.Text>
+                            <Binding Path="Current.CacheFolder" 
+                                     Mode="TwoWay" 
+                                     UpdateSourceTrigger="PropertyChanged">
+                                <Binding.ValidationRules>
+                                    <local:FolderExistsRule/>
+                                </Binding.ValidationRules>
+                            </Binding>
+                        </TextBox.Text>
+                    </TextBox>
+                    <Button Grid.Column="2"
+                            Padding="5,0"
+                            Content="..."
+                            IsEnabled="{Binding IsChecked,ElementName=CheckBox_CacheEnabled}"
+                            Click="SelectCacheFolder_Click"/>
+                </Grid>
+                <TextBlock Text="※ 游戏缓存将会以「缓存文件夹\kcs\resources\」的结构保存到这里。" 
+                       Margin="30,10,0,0" 
+                       Style="{StaticResource DetailTextBlock}"/>
 
-            <Border Grid.Row="0" Style="{StaticResource BorderStyle}"  />
+            <!--第1.5区块-->
 
-            <TextBlock HorizontalAlignment="Left" TextWrapping="Wrap" Text="当客户端请求以下文件时，是否允许从缓存中读取这些文件，并且当缓存缺失时保存文件到缓存：" VerticalAlignment="Top" Grid.Row="1" Margin="15,10,0,0" Height="15"/>
-            <DockPanel HorizontalAlignment="Left" LastChildFill="True" Margin="25,30,0,0" Grid.Row="1" VerticalAlignment="Top" Height="25" Width="405">
-                <Label Content="载入文件"  Style="{StaticResource RadioLabel}" ToolTip="在GameStart按钮之前载入的文件，这部分文件可能会时常更新" />
-                <RadioButton Content="允许读取和保存" IsChecked="{Binding Current.CacheEntryFiles, ConverterParameter=2, Converter={StaticResource SwitchCaseConverter}, Mode=TwoWay}"/>
-                <RadioButton Content="仅允许读取"	 IsChecked="{Binding Current.CacheEntryFiles, ConverterParameter=1, Converter={StaticResource SwitchCaseConverter}, Mode=TwoWay}" />
-                <RadioButton Content="不进行任何操作" IsChecked="{Binding Current.CacheEntryFiles, ConverterParameter=0, Converter={StaticResource SwitchCaseConverter}, Mode=TwoWay}"/>
-            </DockPanel>
-            <DockPanel HorizontalAlignment="Left" LastChildFill="True" Margin="25,55,0,0" Grid.Row="1" VerticalAlignment="Top" Height="25" Width="405">
-                <Label Content="界面文件"  Style="{StaticResource RadioLabel}" ToolTip="母港界面的文件，这部分文件同样可能会更新" />
-                <RadioButton Content="允许读取和保存" IsChecked="{Binding Current.CachePortFiles, ConverterParameter=2, Converter={StaticResource SwitchCaseConverter}, Mode=TwoWay}"/>
-                <RadioButton Content="仅允许读取"	  IsChecked="{Binding Current.CachePortFiles, ConverterParameter=1, Converter={StaticResource SwitchCaseConverter}, Mode=TwoWay}"/>
-                <RadioButton Content="不进行任何操作" IsChecked="{Binding Current.CachePortFiles, ConverterParameter=0, Converter={StaticResource SwitchCaseConverter}, Mode=TwoWay}"/>
-            </DockPanel>
-            <DockPanel HorizontalAlignment="Left" LastChildFill="True" Margin="25,80,0,0" Grid.Row="1" VerticalAlignment="Top" Height="25" Width="405">
-                <Label Content="场景文件"  Style="{StaticResource RadioLabel}" ToolTip="编成、工厂、商店等界面，不包括地图" />
-                <RadioButton Content="允许读取和保存" IsChecked="{Binding Current.CacheSceneFiles, ConverterParameter=2, Converter={StaticResource SwitchCaseConverter}, Mode=TwoWay}"/>
-                <RadioButton Content="仅允许读取"	  IsChecked="{Binding Current.CacheSceneFiles, ConverterParameter=1, Converter={StaticResource SwitchCaseConverter}, Mode=TwoWay}"/>
-                <RadioButton Content="不进行任何操作" IsChecked="{Binding Current.CacheSceneFiles, ConverterParameter=0, Converter={StaticResource SwitchCaseConverter}, Mode=TwoWay}"/>
-            </DockPanel>
-            <DockPanel HorizontalAlignment="Left" LastChildFill="True" Margin="25,105,0,0" Grid.Row="1" VerticalAlignment="Top" Height="25" Width="405">
-                <Label Content="资源文件"  Style="{StaticResource RadioLabel}" ToolTip="包括立绘、BGM以及各种png图片" />
-                <RadioButton Content="允许读取和保存" IsChecked="{Binding Current.CacheResourceFiles, ConverterParameter=2, Converter={StaticResource SwitchCaseConverter}, Mode=TwoWay}"/>
-                <RadioButton Content="仅允许读取"	  IsChecked="{Binding Current.CacheResourceFiles, ConverterParameter=1, Converter={StaticResource SwitchCaseConverter}, Mode=TwoWay}"/>
-                <RadioButton Content="不进行任何操作" IsChecked="{Binding Current.CacheResourceFiles, ConverterParameter=0, Converter={StaticResource SwitchCaseConverter}, Mode=TwoWay}"/>
-            </DockPanel>
-            <DockPanel HorizontalAlignment="Left" LastChildFill="True" Margin="25,130,0,0" Grid.Row="1" VerticalAlignment="Top" Height="25" Width="405">
-                <Label Content="声音文件"  Style="{StaticResource RadioLabel}" ToolTip="主要是舰娘的语音，不包括背景音乐" />
-                <RadioButton Content="允许读取和保存" IsChecked="{Binding Current.CacheSoundFiles, ConverterParameter=2, Converter={StaticResource SwitchCaseConverter}, Mode=TwoWay}"/>
-                <RadioButton Content="仅允许读取"	  IsChecked="{Binding Current.CacheSoundFiles, ConverterParameter=1, Converter={StaticResource SwitchCaseConverter}, Mode=TwoWay}"/>
-                <RadioButton Content="不进行任何操作" IsChecked="{Binding Current.CacheSoundFiles, ConverterParameter=0, Converter={StaticResource SwitchCaseConverter}, Mode=TwoWay}"/>
-            </DockPanel>
+            <TextBlock Margin="30,10,0,0"
+                       Text="缓存以下分类的文件：" 
+                       Style="{StaticResource DetailTextBlock}"/>
+            <StackPanel Margin="30,10,0,0"
+                        Orientation="Horizontal">
+                <StackPanel.Resources>
+                    <Style TargetType="CheckBox">
+                        <Setter Property="Foreground" Value="White"/>
+                        <Setter Property="Margin" Value="10,0,10,0"/>
+                            <Setter Property="IsEnabled" 
+                                    Value="{Binding IsChecked, ElementName=CheckBox_CacheEnabled}"/>
+                            <Style.Triggers>
+                                <Trigger Property="IsEnabled" Value="False">
+                                    <Setter Property="Opacity" Value="0.8"/>
+                                </Trigger>
+                            </Style.Triggers>
+                    </Style>
+                </StackPanel.Resources>
+                <CheckBox Content="载入文件"
+                          ToolTip="在GameStart按钮之前载入的文件，这部分文件可能会时常更新"
+                          IsChecked="{Binding Current.CacheEntryFiles, Converter={StaticResource ThreeStateConverter},Mode=TwoWay}"
+                          />
+                <CheckBox Content="界面文件"
+                          ToolTip="母港界面的文件，这部分文件同样可能会更新"
+                          IsChecked="{Binding Current.CachePortFiles, Converter={StaticResource ThreeStateConverter},Mode=TwoWay}"
+                          />
+                <CheckBox Content="场景文件"
+                          ToolTip="编成、工厂、商店等界面，不包括地图"
+                          IsChecked="{Binding Current.CacheSceneFiles, Converter={StaticResource ThreeStateConverter},Mode=TwoWay}"/>
+                <CheckBox Content="资源文件"
+                          ToolTip="包括立绘、地图、BGM以及各种png图片" 
+                          IsChecked="{Binding Current.CacheResourceFiles, Converter={StaticResource ThreeStateConverter},Mode=TwoWay}"/>
+                <CheckBox Content="声音文件"
+                          ToolTip="主要是舰娘的语音，不包括背景音乐"
+                          IsChecked="{Binding Current.CacheSoundFiles, Converter={StaticResource ThreeStateConverter},Mode=TwoWay}"/>
+            </StackPanel>
+            <Border Style="{StaticResource BorderStyle}" />
+            </StackPanel>
 
-            <Border Grid.Row="1"  Style="{StaticResource BorderStyle}" />
+            <!--第二区块-->
+            <StackPanel Grid.Row="1">
+                <CheckBox Margin="10,10,0,0"
+                          Content="检查文件更新" 
+                          IsThreeState="True"
+                          IsChecked="{Binding Current.CheckFiles,Converter={StaticResource ThreeStateConverter},Mode=TwoWay}"
+                          IsEnabled="{Binding IsChecked, ElementName=CheckBox_CacheEnabled, Mode=TwoWay}" 
+                          Style="{StaticResource CheckFile_SwichCase_StyleKey}">
+                </CheckBox>
 
-            <CheckBox Content="启用Hack规则" HorizontalAlignment="Left" Margin="10,10,0,0" Grid.Row="2" VerticalAlignment="Top" Height="15" Width="96" IsEnabled="{Binding IsChecked, ElementName=checkBox}" IsChecked="{Binding Current.HackEnabled, Mode=TwoWay}"/>
-            <TextBlock Text="※ 例如：当缓存中同时存在101r.swf与101r.hack.swf时，优先返回后者而非前者" HorizontalAlignment="Left" Margin="31,30,0,0" Grid.Row="2" VerticalAlignment="Top" Height="15" Width="427"  Style="{StaticResource DetailTextBlock}"/>
+                <TextBlock Text="※ 检查更新可以保证缓存的游戏文件始终是有效可用的，但这会花费一些加载时间。" 
+                           TextWrapping="Wrap"
+                           Margin="30,10,0,0" 
+                           Style="{StaticResource DetailTextBlock}"/>
+                <Border Style="{StaticResource BorderStyle}" />
+            </StackPanel>
 
-            <Border Grid.Row="2"  Style="{StaticResource BorderStyle}" />
 
-            <CheckBox Content="替换登陆语音与服务器文字" HorizontalAlignment="Left" Margin="10,10,0,0" Grid.Row="3" VerticalAlignment="Top" Height="15" Width="164" 
-                      IsEnabled="{Binding IsChecked, ElementName=checkBox}" IsChecked="{Binding Current.HackTitleEnabled, Mode=TwoWay}"/>
-            <TextBlock HorizontalAlignment="Left" Margin="31,30,0,0" Grid.Row="3" TextWrapping="Wrap" 
-                        VerticalAlignment="Top" Width="482" Height="30"  Style="{StaticResource DetailTextBlock}">
+            <!--第三区块-->
+            <StackPanel Grid.Row="2">
+                <CheckBox Content="启用Hack规则" 
+                          Margin="10,10,0,0" 
+                          IsEnabled="{Binding IsChecked, ElementName=CheckBox_CacheEnabled}" 
+                          IsChecked="{Binding Current.HackEnabled, Mode=TwoWay}"/>
+                <TextBlock Text="※ 例如：当缓存中同时存在101r.swf与101r.hack.swf时，优先使用后者而非前者" 
+                           Margin="31,10,0,0" 
+                           Style="{StaticResource DetailTextBlock}"/>
+                <Border Style="{StaticResource BorderStyle}" />
+            </StackPanel>
+            
+
+            <!--第四区块-->
+            <StackPanel Grid.Row="3">
+            <CheckBox Content="替换登陆语音与服务器文字" 
+                      Margin="10,10,0,0" 
+                      IsEnabled="{Binding IsChecked, ElementName=CheckBox_CacheEnabled}" 
+                      IsChecked="{Binding Current.HackTitleEnabled, Mode=TwoWay}"/>
+            <TextBlock Margin="31,10,0,0" 
+                       TextWrapping="Wrap" 
+                       Style="{StaticResource DetailTextBlock}">
                 <Run Text="※ 允许将游戏登陆语音替换为「缓存文件夹\kcs\sound\titlecall\a.mp3, b.mp3, c.mp3」"/>
                 <LineBreak/>
-                
                 <Run Text="　 并替换服务器文字为「缓存文件夹\kcs\resources\image\world.png」"/>
             </TextBlock>
+                <Border Style="{StaticResource BorderStyle}" />
+            </StackPanel>
 
 
-        </Grid>
+            <!--第五区块-->
+            <StackPanel Grid.Row="4">
+                <CheckBox Name="CheckBox_SaveApiStart2" Margin="10,10,0,0"
+                          Content="保存 api__start2 通信数据" 
+                          IsChecked="{Binding Current.SaveApiStart2, Mode=TwoWay}"/>
+                <TextBlock TextWrapping="Wrap"
+                           Margin="30,10,0,0" 
+                           Style="{StaticResource DetailTextBlock}">
+                    <Run Text="※ 数据将保存在缓存文件夹下 api_start2.dat 中，以用于生成舰娘立绘的文件名列表。"/>
+                    <LineBreak/>
+                    <Run Text="　 只有当此文件不存在时才会进行数据的保存。
+这一设置只有在游戏加载时才有效。"/>
+                </TextBlock>
+                <Button Margin="30,10,0,0"
+                        Padding="10,3"
+                        HorizontalAlignment="Left"
+                        IsEnabled="{Binding IsChecked, ElementName=CheckBox_SaveApiStart2}"
+                        Content="生成舰娘文件名列表"/>
+                <Border Style="{StaticResource BorderStyle}" />
+            </StackPanel>
 
+        </Grid>        
     </ScrollViewer>
 </UserControl>

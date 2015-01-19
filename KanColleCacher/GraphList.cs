@@ -153,7 +153,7 @@ namespace d_f_32.KanColleCacher
 		/// </summary>
 		static public void GenerateList()
 		{
-			var path = Settings.Current.CacheFolder + @"/api_start2.dat";
+			var path = Settings.Current.CacheFolder + "\\api_start2.dat";
 			if (!File.Exists(path))
 			{
 				MessageBox.Show("无法生成舰娘列表，因为没有保存 api_start2 通信数据。", "提督很忙！缓存工具");
@@ -204,7 +204,7 @@ namespace d_f_32.KanColleCacher
 		/// </summary>
 		static void SaveSessionData(Session session)
 		{
-			var path = Settings.Current.CacheFolder + @"/api_start2.dat";
+			var path = Settings.Current.CacheFolder + "\\api_start2.dat";
 
 			var data = session.GetRequestBodyAsString();
 			data = data.StartsWith("svdata=")
@@ -218,7 +218,7 @@ namespace d_f_32.KanColleCacher
 		/// </summary>
 		static object ReadSessionData()
 		{
-			var path = Settings.Current.CacheFolder + @"/api_start2.dat";
+			var path = Settings.Current.CacheFolder + "\\api_start2.dat";
 			var bytes = Encoding.UTF8.GetBytes(File.ReadAllText(path));
 
 			var serializer = new DataContractJsonSerializer(typeof(svdata<kcsapi_start2>));

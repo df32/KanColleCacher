@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace d_f_32.KanColleCacher
 {
-    public static class UriExtension
+    public static class Extension
     {
         public static bool IsFilePath(this Uri uri)
         {

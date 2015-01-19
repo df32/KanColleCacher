@@ -97,7 +97,7 @@ namespace d_f_32.KanColleCacher
                 _CacheSoundFiles = 2;
 
 				_CheckFiles = 1;
-				_SaveApiStart2 = true;
+				_PrintGraphList = true;
          }
        
 
@@ -235,7 +235,7 @@ namespace d_f_32.KanColleCacher
 		private int _CheckFiles;
 		[ExportMetadata("Comment", @"向服务器发送文件验证请求
 ; 0 - 不验证；1 - 不验证资源SWF文件；2 - 验证所有SWF文件
-; 验证文件可以保证缓存的游戏文件始终是有效可用的，但因为要与服务器通信所以会比不验证花费更长的加载时间")]
+; 验证文件比不验证需要更长的加载时间，但可以避免游戏更新造成本地文件失效")]
 		public int CheckFiles
 		{
 			get { return this._CheckFiles; }
@@ -249,24 +249,25 @@ namespace d_f_32.KanColleCacher
 			}
 		}
 
-		private bool _SaveApiStart2;
-		[ExportMetadata("Comment", @"保存 api_start2 通信数据以便生成 舰娘立绘的文件名列表。
-; 只有当缓存文件夹中的 api_start2.dat 不存在时才会进行保存。
-; 这一设置只有在游戏加载时才有效。")]
-		public bool SaveApiStart2
+		private bool _PrintGraphList;
+		/// <summary>
+		/// 输出舰娘立绘的文件名列表
+		/// 只有当缓存文件夹中的GraphList.txt不存在时才输出
+		/// 只在游戏加载时有效
+		/// </summary>
+		[ExportMetadata("Comment", "启用缓存功能")]
+		public bool PrintGraphList
 		{
-			get { return this._SaveApiStart2; }
+			get { return this._PrintGraphList; }
 			set
 			{
-				if (this._SaveApiStart2 != value)
+				if (this._PrintGraphList != value)
 				{
-					this._SaveApiStart2 = value;
+					this._PrintGraphList = value;
 					this.RaisePropertyChanged();
 				}
 			}
 		}
-
-		#region 实现通知
 
 		public event PropertyChangedEventHandler PropertyChanged;
 
@@ -277,7 +278,5 @@ namespace d_f_32.KanColleCacher
 				PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
 			}
 		}
-
-		#endregion
 	}
 }
