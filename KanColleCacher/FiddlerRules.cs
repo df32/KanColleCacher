@@ -56,7 +56,7 @@ namespace d_f_32.KanColleCacher
 				oSession.ResponseBody = File.ReadAllBytes(filepath);
 				_CreateResponseHeader(oSession, filepath);
 
-				//Debug.WriteLine("CACHR> 【返回本地】" + result);
+				//Debug.WriteLine("CACHR> 【返回本地】" + filepath);
 			}
 			else if (direction == Direction.Verify_LocalFile)
 			{

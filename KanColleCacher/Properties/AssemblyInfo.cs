@@ -1,20 +1,17 @@
-﻿using System.Reflection;
+﻿using System;
+using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
-
+using d_f_32.KanColleCacher;
 // 有关程序集的常规信息通过以下
 // 特性集控制。更改这些特性值可修改
 // 与程序集关联的信息。
-#if DEBUG
-[assembly: AssemblyTitle("提督很忙！缓存工具 (DEBUG)")]
-#else
-[assembly: AssemblyTitle("提督很忙！缓存工具")]
-#endif
-[assembly: AssemblyDescription("通过创建本地缓存以加快游戏加载速度（并支持魔改）")]
+[assembly: AssemblyTitle(AssemblyInfo.Title)]
+[assembly: AssemblyDescription(AssemblyInfo.Description)]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("KanColleCacher")]
-[assembly: AssemblyCopyright("©2014 - d.f.32")]
+[assembly: AssemblyProduct(AssemblyInfo.Name)]
+[assembly: AssemblyCopyright(AssemblyInfo.Copyright)]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
@@ -37,5 +34,24 @@ using System.Runtime.InteropServices;
 // 可以指定所有这些值，也可以使用“生成号”和“修订号”的默认值，
 // 方法是按如下所示使用“*”: 
 // [assembly: AssemblyVersion("1.0.*")]
-[assembly: AssemblyVersion("1.3.0.18")]
-[assembly: AssemblyFileVersion("1.3.0.18")]
+[assembly: AssemblyVersion(AssemblyInfo.Version)]
+[assembly: AssemblyFileVersion(AssemblyInfo.Version)]
+
+
+namespace d_f_32.KanColleCacher
+{
+	public static class AssemblyInfo
+	{
+
+		public const string Name = "KanColleCacher";
+		public const string Version = "2.0.0.23";
+		public const string Author = "d.f.32";
+		public const string Copyright = "©2014 - d.f.32";
+#if DEBUG
+		public const string Title = "提督很忙！缓存工具 (DEBUG)";
+#else
+		public const string Title = "提督很忙！缓存工具";
+#endif
+		public const string Description = "通过创建本地缓存以加快游戏加载速度（并支持魔改）";
+	}
+}

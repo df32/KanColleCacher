@@ -4,8 +4,8 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:d_f_32.KanColleCacher"
-             Foreground="White"
-             Background="#FF1B1B1C"
+             Foreground="{DynamicResource ForegroundBrushKey}"
+             
              x:Class="d_f_32.KanColleCacher.CacherToolView" 
              mc:Ignorable="d" 
              d:DesignWidth="590" 
@@ -193,7 +193,7 @@
                             IsEnabled="{Binding IsChecked,ElementName=CheckBox_CacheEnabled}"
                             Click="SelectCacheFolder_Click"/>
                 </Grid>
-                <TextBlock Text="※ 游戏缓存将会以「缓存文件夹\kcs\resources\」的结构保存到这里。" 
+                <TextBlock Text="※ 游戏缓存将会以「缓存文件夹\kcs\resources\」的结构保存到这里。重启KCV后生效。" 
                        Margin="30,10,0,0" 
                        Style="{StaticResource DetailTextBlock}"/>
 
@@ -303,7 +303,8 @@
                         Padding="10,3"
                         HorizontalAlignment="Left"
                         IsEnabled="{Binding IsChecked, ElementName=CheckBox_SaveApiStart2}"
-                        Content="生成舰娘文件名列表"/>
+                        Content="生成舰娘文件名列表"
+                        Click="GenerateFileList_Click"/>
                 <Border Style="{StaticResource BorderStyle}" />
             </StackPanel>
 

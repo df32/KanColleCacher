@@ -206,9 +206,13 @@ namespace d_f_32.KanColleCacher
 		{
 			var path = Settings.Current.CacheFolder + "\\api_start2.dat";
 
+			session.SaveSession(Settings.Current.CacheFolder + "\\api_start2.sess", false);
+
 			var data = session.GetRequestBodyAsString();
 			data = data.StartsWith("svdata=")
 				? data.Substring(7) : data.Replace("svdata=", "");
+
+			//Debug.WriteLineIf(data.Length < 100, data);
 
 			File.WriteAllText(path, data);
 		}
@@ -235,7 +239,9 @@ namespace d_f_32.KanColleCacher
 		{
 			if (oSession.PathAndQuery != "/kcsapi/api_start2")
 				return;
-
+			
+			//Debug.WriteLine("【START2】" + oSession.PathAndQuery);
+			
 			SaveSessionData(oSession);
 
 			//移除规则
@@ -245,13 +251,13 @@ namespace d_f_32.KanColleCacher
 		static public void AppendRule()
 		{
 			FiddlerApplication.AfterSessionComplete += RulePrintGraphList;
-			Debug.WriteLine("CACHR>	RulePrintGraphList Appended");
+			//Debug.WriteLine("CACHR>	RulePrintGraphList Appended");
 		}
 
 		static public void RemoveRule()
 		{
 			FiddlerApplication.AfterSessionComplete -= RulePrintGraphList;
-			Debug.WriteLine("CACHR>	RulePrintGraphList Removed");
+			//Debug.WriteLine("CACHR>	RulePrintGraphList Removed");
 		}
 	}
 	

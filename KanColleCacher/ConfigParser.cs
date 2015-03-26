@@ -1042,7 +1042,7 @@ namespace d_f_32.KanColleCacher.Configuration
 		static bool ConvertBool(string value)
 		{
 			if (String.Compare(value, "True", true) == 0) return true;
-			if (String.Compare(value, "False", true) == 0) return true;
+			if (String.Compare(value, "False", true) == 0) return false;
 			int ret;
 			if (Int32.TryParse(value, out ret))
 				return ret > 0;

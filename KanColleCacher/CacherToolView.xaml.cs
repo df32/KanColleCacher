@@ -39,5 +39,10 @@ namespace d_f_32.KanColleCacher
 				Settings.Current.CacheFolder = dlg.SelectedPath;
 			}
 		}
+
+		private void GenerateFileList_Click(object sender, RoutedEventArgs e)
+		{
+			GraphList.GenerateList();
+		}
     }
 }

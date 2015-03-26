@@ -6,10 +6,10 @@ using File = System.IO.File;
 namespace d_f_32.KanColleCacher
 {
 	[Export(typeof(IToolPlugin))]
-	[ExportMetadata("Title", "KanColleCacher")]
-	[ExportMetadata("Description", "通过创建本地缓存以加快游戏加载速度（并支持魔改）")]
-	[ExportMetadata("Version", "1.3.0.0")]
-	[ExportMetadata("Author", "d.f.32")]
+	[ExportMetadata("Title", AssemblyInfo.Name)]
+	[ExportMetadata("Description", AssemblyInfo.Description)]
+	[ExportMetadata("Version", AssemblyInfo.Version)]
+	[ExportMetadata("Author", AssemblyInfo.Author)]
 	public class KanColleCacher : IToolPlugin
     {
 		const string name = "缓存工具";
@@ -32,7 +32,7 @@ CACHR>	初始化开始：{0}
 			Settings.Load();
 			view = new CacherToolView();
 
-			Debug.WriteLine(@"CACHR>	GraphList加入规则");
+			//Debug.WriteLine(@"CACHR>	GraphList加入规则");
 
 			//只有当列表文件不存在时才打印列表
 			if (Settings.Current.SaveApiStart2 &&
@@ -40,13 +40,13 @@ CACHR>	初始化开始：{0}
 			{
 				GraphList.AppendRule();
 			}
-			Debug.WriteLine(@"CACHR>	GraphList加入规则完成");
+			//Debug.WriteLine(@"CACHR>	GraphList加入规则完成");
 
-			Debug.WriteLine(@"CACHR>	Fiddler初始化开始");
+			//Debug.WriteLine(@"CACHR>	Fiddler初始化开始");
 			FiddlerRules.Initialize();
-			Debug.WriteLine(@"CACHR>	Fiddler初始化完成");
+			//Debug.WriteLine(@"CACHR>	Fiddler初始化完成");
 
-			Debug.WriteLine(@"CACHR>	初始化完成");
+			//Debug.WriteLine(@"CACHR>	初始化完成");
 		}
 
 		~KanColleCacher()
@@ -71,12 +71,11 @@ CACHR>	初始化开始：{0}
 		}
 	}
 
-
 	[Export(typeof(INotifier))]
-	[ExportMetadata("Title", "KanColleCacher")]
-	[ExportMetadata("Description", "通过创建本地缓存以加快游戏加载速度（并支持魔改）")]
-	[ExportMetadata("Version", "1.3.0.0")]
-	[ExportMetadata("Author", "d.f.32")]
+	[ExportMetadata("Title", AssemblyInfo.Name)]
+	[ExportMetadata("Description", AssemblyInfo.Description)]
+	[ExportMetadata("Version", AssemblyInfo.Version)]
+	[ExportMetadata("Author", AssemblyInfo.Author)]
 	public class KanColleCacher_Initializer : INotifier
 	{
 		public void Initialize()
