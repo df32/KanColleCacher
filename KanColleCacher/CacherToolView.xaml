@@ -5,7 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:d_f_32.KanColleCacher"
              Foreground="{DynamicResource ForegroundBrushKey}"
-             Background="Black"
+             
              x:Class="d_f_32.KanColleCacher.CacherToolView" 
              mc:Ignorable="d" 
              d:DesignWidth="590" 
