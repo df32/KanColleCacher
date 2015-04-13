@@ -22,6 +22,12 @@ namespace DebugPlatform
 		static void Main(string[] args)
 		{
 			Console.WriteLine("-----------------------------------------");
+			GraphList.DebugFunc();
+			Console.ReadLine();
+		}
+		static void Main_old(string[] args)
+		{
+			Console.WriteLine("-----------------------------------------");
 			Console.WriteLine("KanColleCacher_1.3_Updater	Copyright d.f.32 - 2015 \n");
 			Console.WriteLine("本程序是KCV缓存插件 KanColleCacher 的更新补丁程序。");
 			Console.WriteLine("插件从1.3更新到2.0时废弃了原有的设置文件与部分数据文件的储存方式，这将造成设置的丢失以及部分缓存文件需要重新下载。");

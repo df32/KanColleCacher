@@ -43,6 +43,9 @@
     <Reference Include="KanColleWrapper">
       <HintPath>Libraries\KanColleWrapper.dll</HintPath>
     </Reference>
+    <Reference Include="Livet">
+      <HintPath>Libraries\Livet.dll</HintPath>
+    </Reference>
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
     <Reference Include="System" />
