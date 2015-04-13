@@ -97,7 +97,7 @@ namespace d_f_32.KanColleCacher
                 _CacheSoundFiles = 2;
 
 				_CheckFiles = 1;
-				_SaveApiStart2 = true;
+				//_SaveApiStart2 = true;
          }
        
 
@@ -249,22 +249,22 @@ namespace d_f_32.KanColleCacher
 			}
 		}
 
-		private bool _SaveApiStart2;
-		[ExportMetadata("Comment", @"保存 api_start2 通信数据以便生成 舰娘立绘的文件名列表。
-; 只有当缓存文件夹中的 api_start2.dat 不存在时才会进行保存。
-; 这一设置只有在游戏加载时才有效。")]
-		public bool SaveApiStart2
-		{
-			get { return this._SaveApiStart2; }
-			set
-			{
-				if (this._SaveApiStart2 != value)
-				{
-					this._SaveApiStart2 = value;
-					this.RaisePropertyChanged();
-				}
-			}
-		}
+//		private bool _SaveApiStart2;
+//		[ExportMetadata("Comment", @"保存 api_start2 通信数据以便生成 舰娘立绘的文件名列表。
+//; 只有当缓存文件夹中的 api_start2.dat 不存在时才会进行保存。
+//; 这一设置只有在游戏加载时才有效。")]
+//		public bool SaveApiStart2
+//		{
+//			get { return this._SaveApiStart2; }
+//			set
+//			{
+//				if (this._SaveApiStart2 != value)
+//				{
+//					this._SaveApiStart2 = value;
+//					this.RaisePropertyChanged();
+//				}
+//			}
+//		}
 
 		#region 实现通知
 

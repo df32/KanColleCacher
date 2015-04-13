@@ -5,7 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:d_f_32.KanColleCacher"
              Foreground="{DynamicResource ForegroundBrushKey}"
-             
+             Background="Black"
              x:Class="d_f_32.KanColleCacher.CacherToolView" 
              mc:Ignorable="d" 
              d:DesignWidth="590" 
@@ -288,16 +288,17 @@
 
             <!--第五区块-->
             <StackPanel Grid.Row="4">
-                <CheckBox Name="CheckBox_SaveApiStart2" Margin="10,10,0,0"
-                          Content="保存 api__start2 通信数据" 
-                          IsChecked="{Binding Current.SaveApiStart2, Mode=TwoWay}"/>
+                <Label Content="舰娘文件名列表" Margin="10,10,0,0" Padding="0" Foreground="White"/>
                 <TextBlock TextWrapping="Wrap"
                            Margin="30,10,0,0" 
                            Style="{StaticResource DetailTextBlock}">
-                    <Run Text="※ 数据将保存在缓存文件夹下 api_start2.dat 中，以用于生成舰娘立绘的文件名列表。"/>
+                    <Run Text="※ 每一个舰娘都有对应的文件名。例如，加贺改的文件名为 uuqdlbtrkmvk，"/>
                     <LineBreak/>
-                    <Run Text="　 只有当此文件不存在时才会进行数据的保存。
-这一设置只有在游戏加载时才有效。"/>
+                    <Run Text="　 立绘文件为「kcs\resources\swf\ships\uuqdlbtrkmvk.swf」，"/>
+                    <LineBreak/>
+                    <Run Text="　 语音文件为「kcs\sound\kcuuqdlbtrkmvk\1.mp3」等。"/>
+                    <LineBreak/>
+                    <Run Text="　 点击下面的按钮以在缓存文件夹中生成一个包含所有舰娘文件名的TXT文档。"/>
                 </TextBlock>
                 <Button Margin="30,10,0,0"
                         Padding="10,3"
