@@ -57,9 +57,34 @@ namespace d_f_32.KanColleCacher
 			else
 			{
 				//设置文件丢失
+				try
+				{
+					
+				Current = new Settings();
+				if (!Directory.Exists(Current.CacheFolder))
+					Directory.CreateDirectory(Current.CacheFolder);
+				Save();
+				}
+				catch (Exception ex)
+				{
+					Log.Exception("Settings.Load()", ex, "Current.new !ERROR");
+					Debug.WriteLine(ex);
+				}
 			}
 
+			try
+			{
+				
+			Debug.WriteLine("Settings.Current.CacheFolder = " + Current.CacheFolder);
+			
+			}
+			catch (Exception ex)
+			{
+				Log.Exception("Settings.Load()", ex, "Current== null");
+				Debug.WriteLine(ex);
+			}
 			Current = Current ?? new Settings();
+			Debug.Flush();
         }
         
         /// <summary>
